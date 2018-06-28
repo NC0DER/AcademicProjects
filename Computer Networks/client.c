@@ -63,5 +63,23 @@ int main(int argc, char *argv[]){
     server_name = strdup(argv[1]);//Strdup allocates memory for the duplicated string
     port_number = strdup(argv[2]);
 
+    //Client Initialization
+    memset(&address_info,0,sizeof(address_info));
+    address_info.ai_family = AF_UNSPEC;
+    address_info.ai_socktype = SOCK_STREAM;
+    address_info.ai_protocol = 0; //?
+    if(getaddrinfo(server_name, port_number, &address_info, &server_info) != 0){ //returns nonzero on error
+        perror("getaddrinfo failed: ");
+        exit(EXIT_FAILURE);
+    }
+    //Loop through all the results and connect to the first socket possible
+    for(ptr = server_info; ptr != NULL; ptr = ptr->ai_next){
+        sockfd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+        if (sockfd == -1){perror("Client Socket failed: "); continue;}
+        if (connect(sockfd, ptr->ai_addr, ptr->ai_addrlen) == -1){close(sockfd); perror("Connect failed: "); continue;}
+        break; //Connected successfully on a socket
+    }
+    if (ptr == NULL) {perror("Failed to connect to host: "); exit(EXIT_FAILURE);}
+
     return 0;
 }
