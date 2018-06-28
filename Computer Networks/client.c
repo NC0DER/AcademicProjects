@@ -81,5 +81,13 @@ int main(int argc, char *argv[]){
     }
     if (ptr == NULL) {perror("Failed to connect to host: "); exit(EXIT_FAILURE);}
 
+    //Cleanup of allocated memory
+    free(server_name);
+    free(port_number);
+    free(buffer);
+    free(buf_token);
+    //Cleanup of net structs/sockets
+    freeaddrinfo(server_info);
+    close(sockfd);
     return 0;
 }
