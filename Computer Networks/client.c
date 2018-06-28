@@ -81,6 +81,67 @@ int main(int argc, char *argv[]){
     }
     if (ptr == NULL) {perror("Failed to connect to host: "); exit(EXIT_FAILURE);}
 
+    //Traversing through all get/put requests
+    for(i = 3; i < argc; i = i + 2){ //every request is at least 2 operands long
+        if (strcmp(argv[i], "get") == 0){
+            if ((strcmp(argv[i + 1], "get") == 0) || (strcmp(argv[i + 1], "put") == 0)){
+				perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+				exit(EXIT_FAILURE);
+            }
+            else{
+                buffer[0] = 'g';
+                for (j = 1; j < BUFFERSIZE; ++j){
+                    buffer[j] = argv[i + 1][j-1];
+                    if(buffer[j] == '\0') break; //After null-termination exit
+                }
+                buffer[j] = '\0';
+                numberof_bytes = writen(sockfd, buffer, (size_t) (j + 1));
+                if(numberof_bytes < 0){
+                    perror("Failed to send data to host: ");
+                     //Cleanup of allocated memory
+                    free(server_name);
+                    free(port_number);
+                    free(buffer);
+                    //Cleanup of net structs/sockets
+                    freeaddrinfo(server_info);
+                    close(sockfd);
+                    exit(EXIT_FAILURE);
+                }
+                memset(buffer, 0 , BUFFERSIZE);
+                do{ //Reading Block
+                    int count = 0; //count '\0' occurences
+                    memset(buf_token, 0 , BUFFERSIZE);
+                    numberof_bytes = read(sockfd, buf_token, BUFFERSIZE);
+                    if(numberof_bytes < 0){
+                        perror("Failed to receive data from client: ");
+                        //Cleanup of allocated memory
+                        free(port_number);
+                        free(buffer);
+                        free(buf_token);
+                        //Cleanup of net structs/sockets
+                        freeaddrinfo(server_info);
+                        close(sockfd);
+                        exit(EXIT_FAILURE);//EOF reached, server closed connection
+                    }
+                    for(k = 0, j = 0; k < numberof_bytes; ++k, ++j){
+                        buffer[k] = buf_token[j];
+                        if((buffer[k] == '\0') &&(count < 2)){
+                            ++count;
+                        }
+                    }
+                    if((buffer[k] == '\0') && (buffer[0] == 'f')){break;} //found: Read until the first '\0'
+                    else if(buffer[0] == 'n'){break;} //not found: just break out of the reading loop
+                    else if((buffer[0] != 'f') && (buffer[0] != 'n')){break;} //Server did not follow protocol exit.
+                }while(numberof_bytes != 0);
+                if(buffer[0] == 'f'){
+                    printf("%s\n",buffer+1); //will print "<returned-key>\n" without 'f'
+                }else if(buffer[0] == 'n'){
+                    printf("\n");
+                }
+                else break; //go to cleanup then close connection and exit
+            }
+        }
+    }    
     //Cleanup of allocated memory
     free(server_name);
     free(port_number);
