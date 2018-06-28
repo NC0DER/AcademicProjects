@@ -36,5 +36,32 @@ int main(int argc, char *argv[]){
     char *buffer = malloc(sizeof(*buffer) * BUFFERSIZE);
     char *buf_token = malloc(sizeof(*buf_token) * BUFFERSIZE);
     struct addrinfo address_info, *server_info, *ptr;
+    
+    if (argc < 5) {
+        perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+        exit(EXIT_FAILURE);
+    }
+    else if((argc < 6) && (strcmp(argv[3],"put") == 0)){ //call with only 1 get request 5 arguments in-total
+        perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+        exit(EXIT_FAILURE);
+    }
+    /*
+    Case 1: ... get \n  (No operand after last get request)
+    Case 2: ... put \n  (No operand after last put request)
+    Case 3: ... put <key> \n (No value operand after last put request)
+    Case 4: ... <operand> Line 28: if
+    (An operand that isn't get/put and doesn't belong to a request)              
+    */
+    if ((strcmp(argv[argc - 1],"get") == 0) || (strcmp(argv[argc - 1],"put") == 0) || (strcmp(argv[argc - 2],"put") == 0)){
+        perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+        exit(EXIT_FAILURE);
+    }
+    if((strcmp(argv[argc - 3],"get") == 0) || (strcmp(argv[argc - 4],"put") == 0) ){ 
+            perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+            exit(EXIT_FAILURE);
+    }
+    server_name = strdup(argv[1]);//Strdup allocates memory for the duplicated string
+    port_number = strdup(argv[2]);
+
     return 0;
 }
