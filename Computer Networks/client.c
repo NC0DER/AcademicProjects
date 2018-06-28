@@ -28,3 +28,13 @@ ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stev
     return n;
 }
 
+int main(int argc, char *argv[]){
+    int i = 0, j = 0, k = 0, sockfd = 0;
+    ssize_t numberof_bytes = 0;
+    char *server_name = NULL;
+    char *port_number = NULL;
+    char *buffer = malloc(sizeof(*buffer) * BUFFERSIZE);
+    char *buf_token = malloc(sizeof(*buf_token) * BUFFERSIZE);
+    struct addrinfo address_info, *server_info, *ptr;
+    return 0;
+}
