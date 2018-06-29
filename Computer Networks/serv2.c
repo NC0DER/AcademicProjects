@@ -123,5 +123,37 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
 
+    /*
+      The same semaphore is used for both put() and get()
+      In order to mutually exclude any child process, from calling put()/get() concurrently
+      while another child process, also calls put()/get(), thus avoiding the race condition
+      on this shared memory segment (key value kvstore)
+   */
+    data_semaphore = semget(IPC_PRIVATE, 1, IPC_CREAT | 0600); //Creating Data Semaphore
+    if(data_semaphore == -1){
+        perror("Semget failed:");
+        exit(EXIT_FAILURE);
+    }
+    if((semctl(data_semaphore,0,SETVAL,1)) == -1){ //Test & Initialize the semaphore to 1
+        perror("Semctl failed:");
+        exit(EXIT_FAILURE);
+    }
+    shared_mem_size = (2000 * sizeof(*kvstore));
+
+    //Creating and Attaching shared memory before creating parent and children processes
+    if((shared_mem_id = shmget(IPC_PRIVATE, shared_mem_size, IPC_CREAT | IPC_EXCL | 0600)) == -1){
+        perror("Shmget Failed:");
+        exit(EXIT_FAILURE);
+    }
+    if((kvstore = shmat(shared_mem_id, NULL, 0)) == (struct kvstore_node *)-1) {
+        perror("Shmat Failed:");
+        exit(EXIT_FAILURE);
+    }
+    //Initializing node contents to '\0'
+    for(i = 0; i < 2000; ++i){
+        memset(kvstore[i].key, 0, 1025);
+        memset(kvstore[i].value, 0, 1025);
+    }
+
     return 0;
 }
