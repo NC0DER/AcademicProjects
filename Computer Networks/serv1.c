@@ -36,3 +36,31 @@ char *get(char *key){
     return NULL;
 }
 
+void put(char *key, char *value){
+    int found = 0;
+    struct kvstore_node* new_node = NULL;
+
+    for(ptr = &kvstore; *ptr != NULL; ptr = &(*ptr)->next_node){
+        if(strncmp(key, (*ptr)->key, 1025) == 0){ //Key found, overwrite new value.
+            memmove((*ptr)->value , value, 1025);
+            (*ptr)->value[1024] = '\0'; //Null terminate for safety
+            found = 1;
+            break;
+        }
+    }
+    if(found) return;
+    /*If key is found, the call simply returns with no value(void put).
+      Ptr currently points to last empty next_node.
+      The new element is added to the end of the list. */
+    new_node = malloc(1 * sizeof(*new_node));
+    //After creating new node, assign the new value
+    if(new_node == NULL){perror("Malloc of node failed: "); return;}
+    memmove(new_node->key, key, 1025);
+    new_node->key[1024] = '\0'; //Null terminate for safety
+    memmove(new_node->value, value, 1025);
+    new_node->value[1024] = '\0'; //Null terminate for safety
+    new_node->next_node = NULL;
+    *ptr = new_node;
+    return; //New node successfully created return.
+}
+
