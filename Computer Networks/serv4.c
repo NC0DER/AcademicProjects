@@ -155,3 +155,23 @@ int main(int argc, char *argv[]){
         perror("Thread set detached state failed");
         exit(EXIT_FAILURE);
     }
+    //Cleanup of allocated memory
+    if(port_number != NULL){free(port_number);}
+    //Cleanup of net structs/sockets
+    freeaddrinfo(server_info);
+    close(sockfd);
+
+    /*
+        Cleanup of every store field and store itself.
+        The content of the node is deleted, then the node itself.
+        Deleting nodes from start to end.
+    */
+    for( ptr = &kvstore; *ptr != NULL; ){
+        temp = *ptr; //Hold the current node
+        ptr = &(*ptr)->next_node; //Point to next node
+        free(temp); //Release the current node
+    }
+    pthread_mutex_destroy(&data_mutex); //Destroy Mutex
+    pthread_attr_destroy(&thread_attr); //Destroy Atrribute
+    return 0;
+}
