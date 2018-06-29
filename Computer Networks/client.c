@@ -141,6 +141,43 @@ int main(int argc, char *argv[]){
                 else break; //go to cleanup then close connection and exit
             }
         }
+        else if(strcmp(argv[i],"put") == 0){
+            if((strcmp(argv[i+1],"get") == 0) || (strcmp(argv[i+1],"put") == 0)){
+                    perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+                    exit(EXIT_FAILURE);
+            }
+            if((strcmp(argv[i+2],"get") == 0) || (strcmp(argv[i+2],"put") == 0)){
+                    perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+                    exit(EXIT_FAILURE);
+            }
+            else{
+                buffer[0] = 'p';
+                for (j = 1; j < BUFFERSIZE; ++j){
+                    buffer[j] = argv[i + 1][j-1];
+                    if(buffer[j] == '\0') break;
+                }
+                buffer[j] = '\0'; //'p' + key + '\0'
+                ++j;
+				for (k = 0 ; j < BUFFERSIZE; ++j, ++k){
+                    buffer[j] = argv[i + 2][k];
+                    if(buffer[j] == '\0') break;
+                }
+                buffer[j] = '\0'; //'p' + key + '\0' + value + '\0'
+                numberof_bytes = writen(sockfd, buffer, (size_t) (j + 1));
+                if(numberof_bytes < 0){
+                    perror("Failed to send data to host: ");
+                     //Cleanup of allocated memory
+                    free(server_name);
+                    free(port_number);
+                    free(buffer);
+                    //Cleanup of net structs/sockets
+                    freeaddrinfo(server_info);
+                    close(sockfd);
+                    exit(EXIT_FAILURE);
+                }
+                 ++i; //put request is 1 operand longer of get request
+            }
+        }  
     }    
     //Cleanup of allocated memory
     free(server_name);
