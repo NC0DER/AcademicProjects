@@ -95,3 +95,23 @@ ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stev
     return n;
 }
 
+int main(int argc, char *argv[]){
+    int i = 1, sockfd = 0, new_sockfd = 0;
+    char *port_number = NULL;
+    pthread_t thread_id;
+    pthread_attr_t thread_attr;
+    struct sigaction sigint_action;
+    struct addrinfo address_info, *server_info, *pntr;
+    struct sockaddr_storage client_address; // connector's address information
+    socklen_t address_size;
+
+    struct kvstore_node* temp = NULL;
+    kvstore = NULL;
+
+    if(argc != 2){
+        perror("Syntax: ./server <port_number> ");
+        exit(EXIT_FAILURE);
+    }
+
+    port_number=strdup(argv[1]);
+
