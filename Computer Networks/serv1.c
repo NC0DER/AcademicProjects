@@ -24,3 +24,15 @@ struct kvstore_node{
 struct kvstore_node* kvstore;
 struct kvstore_node** ptr; //Pointer to reference the store
 
+char *get(char *key){
+    if(kvstore == NULL)
+        return NULL; //store is empty, no element to return.
+    for(ptr = &kvstore; *ptr != NULL; ptr = &(*ptr)->next_node){
+        if(strncmp(key, (*ptr)->key, 1025) == 0) //Key found, return the value.
+            return (*ptr)->value;
+    }
+    /*If for doesn't return, then there is no next node.
+      No key has been found on record, and the record is finished. */
+    return NULL;
+}
+
