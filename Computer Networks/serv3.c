@@ -134,3 +134,39 @@ int main(int argc, char *argv[]) {
         perror("Syntax: number_of_processes should be a positive non-zero integer");
         exit(EXIT_FAILURE);
     }
+    pid_table = malloc(numberof_procs * sizeof(*pid_table));
+    data_semaphore = semget(IPC_PRIVATE, 1, IPC_CREAT | 0600); //Creating Semaphore for data handling
+    if (data_semaphore == -1) {
+        perror("Semget failed:");
+        exit(EXIT_FAILURE);
+    }
+    connect_semaphore = semget(IPC_PRIVATE, 1, IPC_CREAT | 0600); //Creating Semaphore for accept() call
+    if (connect_semaphore == -1) {
+        perror("Semget failed:");
+        exit(EXIT_FAILURE);
+    }
+    if ((semctl(data_semaphore, 0, SETVAL, 1)) == -1) { //Test & Initialize the data semaphore to 1
+        perror("Semctl failed:");
+        exit(EXIT_FAILURE);
+    }
+    if ((semctl(connect_semaphore, 0, SETVAL, 1)) == -1) { //Test & Initialize the connect semaphore to 1
+        perror("Semctl failed:");
+        exit(EXIT_FAILURE);
+    }
+    shared_mem_size = (1000 * sizeof(*kvstore));
+
+    //Creating and Attaching shared memory before creating parent and children processes
+    if ((shared_mem_id = shmget(IPC_PRIVATE, shared_mem_size, IPC_CREAT | IPC_EXCL | 0600)) == -1) {
+        perror("Shmget Failed:");
+        exit(EXIT_FAILURE);
+    }
+    if ((kvstore = shmat(shared_mem_id, NULL, 0)) == (struct kvstore_node *) -1) {
+        perror("Shmat Failed:");
+        exit(EXIT_FAILURE);
+    }
+    //Initializing node contents to '\0'
+    for (i = 0; i < 1000; ++i) {
+        memset(kvstore[i].key, 0, 1025);
+        memset(kvstore[i].value, 0, 1025);
+    }
+
