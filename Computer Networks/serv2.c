@@ -95,3 +95,33 @@ ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stev
     return n;
 }
 
+int main(int argc, char *argv[]){
+    int i = 1, j = 0, sockfd = 0, new_sockfd = 0;
+    ssize_t numberof_bytes = 0;
+    size_t size = 0;
+    pid_t pid = 0;
+    char *port_number = NULL;
+    char *buf_token = NULL;
+    char *returned = NULL;
+    char *buffer = malloc(sizeof(*buffer) * BUFFERSIZE);
+    struct sigaction sigint_action, sigchld_action;
+    struct addrinfo address_info, *server_info, *pntr;
+    struct sockaddr_storage client_address; // connector's address information
+    socklen_t address_size;
+
+    up.sem_num = 0; //only one semaphore used
+    up.sem_op = 1; //semval +1 => semaphore up
+    up.sem_flg = 0; //no special flags
+
+    down.sem_num = 0; //only one semaphore used
+    down.sem_op = -1; //semval -1 => semaphore down
+    down.sem_flg = 0; //no special flags
+
+    if(argc != 2){
+        perror("Syntax: ./server <port_number> ");
+        free(buffer);
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
