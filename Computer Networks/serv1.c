@@ -137,5 +137,27 @@ int main(int argc, char *argv[]){
     sigaction(SIGINT, &sigint_action, NULL); //equivalent to signal(SIGINT,handle_cleanup);
     sigint_action.sa_flags = SA_RESTART; //GNU 24.3.5 Flags for sigaction
     // Most of the time, SA_RESTART is a good value to use for this field.
+    //Cleanup of allocated memory
+    if(port_number != NULL){free(port_number);}
+    if(buffer != NULL){free(buffer);}
+    if(buf_token != NULL){free(buf_token);}
+    //Cleanup of net structs/sockets
+    freeaddrinfo(server_info);
+    close(sockfd);
+    if(new_sockfd > 0){
+        close(new_sockfd);  //Close the connection in case of interrupt above
+        new_sockfd = -1;
+    }
+
+    /*
+        Cleanup of every store field and store itself.
+        The content of the node is deleted, then the node itself.
+        Deleting nodes from start to end.
+    */
+    for( ptr = &kvstore; *ptr != NULL; ){
+        temp = *ptr; //Hold the current node
+        ptr = &(*ptr)->next_node; //Point to next node
+        free(temp); //Release the current node
+    }
     return 0;
 }
