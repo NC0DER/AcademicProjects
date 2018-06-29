@@ -64,3 +64,26 @@ void put(char *key, char *value){
     return; //New node successfully created return.
 }
 
+ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stevens book, page 78.
+    size_t nleft;
+    ssize_t nwriten;
+    const char *ptr;
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0){
+        if ( ((nwriten = write(fd, ptr, nleft)) <= 0 ) ){
+            if (errno == EINTR) nwriten = 0; /* and call write() again */
+            else return -1; /* error */
+            } 
+        nleft -= nwriten;
+        ptr += nwriten;
+    }
+    return n;
+}
+
+volatile sig_atomic_t uninterrupted = 1;
+void handle_cleanup(int signal_flag)
+{
+    uninterrupted = 0;
+}
+
