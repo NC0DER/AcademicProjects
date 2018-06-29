@@ -212,3 +212,46 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     } //equivalent to signal(SIGCHLD,signal_child_handler);
 
+
+
+
+    for(;uninterrupted;); //Wait for sigint here
+    /*
+      After sigint all child process are getting Sigint too
+      Since they inherit the same signal handler from main()
+      They cleanup and exit
+    */
+
+    for(i = 0; i < numberof_procs; ++i){
+        kill(pid_table[i],SIGINT);
+        kill(pid_table[i],SIGINT);//Second ctrl ^c for persistent processes
+    }
+    for(i = 0; i < numberof_procs; ++i)
+        kill(pid_table[i], SIGKILL); //Finally Kill all Children
+
+    while((pid = waitpid(-1, NULL, WNOHANG)) > 0); //Wait all Child processes to exit()
+    if(port_number != NULL){free(port_number);}
+    if(buffer != NULL){free(buffer);}
+    if(buf_token != NULL){free(buf_token);}
+    if(pid_table != NULL){free(pid_table);}
+    //Cleanup of net structs/sockets
+    freeaddrinfo(server_info);
+    close(sockfd);
+    if(new_sockfd > 0){
+        close(new_sockfd);  //Close the connection in case of interrupt above
+        new_sockfd = -1;
+    }
+    /*
+        Cleanup of every store field and store itself.
+        The content of the node is deleted, then the node itself.
+        Deleting nodes from start to end.
+    */
+    if(shmdt(kvstore) == -1){ //Detaching from shared memory segment
+        perror("Shmdt Failed: ");
+        exit(EXIT_FAILURE);
+    }
+    shmctl(shared_mem_id, IPC_RMID, NULL); //Deleting the shared memory segment
+    semctl(data_semaphore, 0, IPC_RMID); //Deleting the data semaphore
+    semctl(connect_semaphore, 0, IPC_RMID); //Deleting the connect semaphore
+    return 0;
+}
