@@ -15,3 +15,16 @@
 #include <arpa/inet.h>
 #include "keyvalue.h"
 
+#define BACKLOG 5
+#define BUFFERSIZE 2055
+
+void signal_child_handler(int signal_flag){
+    while (waitpid(-1, NULL, WNOHANG) > 0); //Alternative parameter -1 instead of 0
+}
+
+volatile sig_atomic_t uninterrupted = 1;
+void handle_cleanup(int signal_flag)
+{
+    uninterrupted = 0;
+}
+
