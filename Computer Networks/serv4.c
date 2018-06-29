@@ -95,6 +95,266 @@ ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stev
     return n;
 }
 
+void *treat_requests_function(void *arg){
+    char *buf_token = NULL;
+    char *returned = NULL;
+    char *buffer = malloc(sizeof(*buffer) * BUFFERSIZE);
+    int i = 0, j = 0, leftover = 0, escape = 0, new_sockfd = 0;
+    ssize_t numberof_bytes = 0;
+    size_t size = 0;
+    numberof_bytes = 1;
+    new_sockfd = (int)(long int)arg;
+    /*
+    When read returns 0, client has closed connection
+    When read/write return -1, the connection has failed,
+    So we continue; to the next iteration of accepting a client
+    */
+    
+    for(;(numberof_bytes > 0);){
+        //Treat requests here
+        buf_token = malloc(sizeof(*buf_token) * (BUFFERSIZE));
+        if (leftover == 0) {
+            memset(buffer, 0, BUFFERSIZE); //clearing out the array
+            do { //Reading Block
+                int count = 0; //count '\0' occurences
+                memset(buf_token, 0, BUFFERSIZE);
+                numberof_bytes = read(new_sockfd, buf_token, BUFFERSIZE);
+                if (numberof_bytes < 0) {
+                    perror("Failed to receive data from client: ");
+                    //Cleanup of allocated memory
+                    free(buf_token);
+                    buf_token = NULL;
+                    numberof_bytes = 0;
+                    escape = 1;
+                    if(new_sockfd > 0){
+                        close(new_sockfd);  //Terminate the connection early
+                        new_sockfd = -1;
+                    }
+                    break; //step out of the reading loop
+                }
+                buffer[numberof_bytes - 1] = '\0'; //Terminating just in case of broken command
+                for (i = 0, j = 0; i < numberof_bytes; ++i, ++j) {
+                    buffer[i] = buf_token[j];
+                    if ((buffer[i] == '\0') && (count < 2)) {
+                        ++count;
+                    }
+                }
+                if ((buffer[i] == '\0') && (buffer[0] == 'g')) { break; } //Read until the first '\0'
+                else if ((buffer[i] == '\0') && (buffer[0] == 'p') && (count == 2)) { break; } //or Read until the second '\0
+                else if ((buffer[0] != 'g') && (buffer[0] != 'p')) { break; } //Client did not followed protocol exit.
+            } while (numberof_bytes != 0);
+        }
+        if(escape == 1) continue;
+        //When leftover is found, the above reading method is skipped
+        i = 0;
+        if (buffer[0] == 'g') {
+            int count = 0;
+            memset(buf_token, 0, BUFFERSIZE);
+            ++i; //index past 'g'
+            for (j = 0; j < BUFFERSIZE; ++i, ++j) {
+                buf_token[j] = buffer[i]; //Assign first element after 'g'
+                if (buf_token[j] == '\0') break;
+            }
+            ++i; //after '\0'
+
+            size = strlen(buf_token) + 1; //size + '\0'
+
+            if(pthread_mutex_lock(&data_mutex) != 0){ //lock mutex
+                perror("Unable to lock mutex: ");
+                //Cleanup of allocated memory
+                if(buffer != NULL){
+                    free(buffer);
+                    buffer = NULL;
+                }
+                if(buf_token != NULL){
+                    free(buf_token);
+                    buf_token = NULL;
+                }
+                //Closing the socket thread-side
+                if(new_sockfd > 0){
+                    close(new_sockfd);
+                    new_sockfd = -1;
+                } //Thread succesfully closes the connection
+                return NULL;
+            }
+            returned = get(buf_token);
+            if(pthread_mutex_unlock(&data_mutex) != 0) { //unlock mutex
+                perror("Unable to unlock mutex: ");
+                //Cleanup of allocated memory
+                if(buffer != NULL){
+                    free(buffer);
+                    buffer = NULL;
+                }
+                if(buf_token != NULL){
+                    free(buf_token);
+                    buf_token = NULL;
+                }
+                //Closing the socket thread-side
+                if(new_sockfd > 0){
+                    close(new_sockfd);
+                    new_sockfd = -1;
+                } //Thread succesfully closes the connection
+                return NULL;
+            }
+
+            if (returned == NULL) { //Not Found
+                numberof_bytes = writen(new_sockfd, "n", 1); //string not found, only send "n\0", should be replaced by just 'n'
+                if (numberof_bytes < 0) {
+                    perror("Failed to send data to client: ");
+                    //Cleanup of allocated memory
+                    free(buf_token);
+                    buf_token = NULL;
+                    numberof_bytes = 0;
+                    if(new_sockfd > 0){
+                        close(new_sockfd);  //Terminate the connection early
+                        new_sockfd = -1;
+                    }
+                    continue;
+                }
+            }
+            else{ //Found
+                size = strlen(returned) + 2; // 'f' +'\0'
+                char *freturned = malloc(size * sizeof(*freturned));
+                freturned[0] = 'f';
+                for (j = 0; j < size; ++j)
+                    freturned[j + 1] = returned[j];
+                numberof_bytes = writen(new_sockfd, freturned, size);
+                if (numberof_bytes < 0) {
+                    perror("Failed to send data to client: ");
+                    //Cleanup of allocated memory
+                    free(buf_token);
+                    buf_token = NULL;
+                    free(freturned);
+                    freturned = NULL;
+                    numberof_bytes = 0;
+                    if(new_sockfd > 0){
+                        close(new_sockfd);  //Terminate the connection early
+                        new_sockfd = -1;
+                    }
+                    continue;
+                }
+                if(freturned != NULL){
+                    free(freturned);
+                    freturned = NULL;
+                }
+            }
+            if (i < BUFFERSIZE) {
+                if (buffer[i] == 'g') { //handle leftover on buffer
+                    for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j)
+                        buffer[j] = buffer[i];
+
+                    leftover = 1; //set leftover to 1 thus skipping read method
+                } else if (buffer[i] == 'p') {
+                    for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j)
+                        buffer[j] = buffer[i];
+
+                    leftover = 1; //set leftover to 1 thus skipping read method
+                } else leftover = 0; //allow read method to be executed
+            }
+        }
+        else if (buffer[0] == 'p') {
+            int size2 = 0;
+            int count = 0;
+            char *temp_str = NULL;
+            memset(buf_token, 0, BUFFERSIZE); //Empty for first element
+            ++i; //index past 'p'
+            for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j) {
+                buf_token[j] = buffer[i]; //Assign first element after 'p'
+                if (buf_token[j] == '\0') break;
+            }
+            ++i; //after '\0'
+
+            size = strlen(buf_token) + 1; //size + '\0'
+            temp_str = strdup(buf_token); //keep first element
+            memset(buf_token, 0, BUFFERSIZE); //Empty for second element
+            for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j) {
+                buf_token[j] = buffer[i]; //Assign second element after first
+                if (buf_token[j] == '\0') break;
+            }
+            ++i; //after '\0'
+
+            size2 = strlen(buf_token) + 1; //size + '\0'
+
+            if(pthread_mutex_lock(&data_mutex) != 0){ //lock mutex
+                perror("Unable to lock mutex: ");
+                //Cleanup of allocated memory
+                if(buffer != NULL){
+                    free(buffer);
+                    buffer = NULL;
+                }
+                if(buf_token != NULL){
+                    free(buf_token);
+                    buf_token = NULL;
+                }
+                //Closing the socket thread-side
+                if(new_sockfd > 0){
+                    close(new_sockfd);
+                    new_sockfd = -1;
+                } //Thread succesfully closes the connection
+                return NULL;
+            }
+            put(temp_str, buf_token); //No sends to client here
+            if(pthread_mutex_unlock(&data_mutex) != 0) { //unlock mutex
+                perror("Unable to unlock mutex: ");
+                //Cleanup of allocated memory
+                if(buffer != NULL){
+                    free(buffer);
+                    buffer = NULL;
+                }
+                if(buf_token != NULL){
+                    free(buf_token);
+                    buf_token = NULL;
+                }
+                //Closing the socket thread-side
+                if(new_sockfd > 0){
+                    close(new_sockfd);
+                    new_sockfd = -1;
+                } //Thread succesfully closes the connection
+                return NULL;
+            }
+
+            free(temp_str);
+
+            if (i < BUFFERSIZE) {
+                if (buffer[i] == 'g') { //handle leftover on buffer
+                    for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j)
+                        buffer[j] = buffer[i];
+
+                    leftover = 1; //set leftover to 1 thus skipping read method
+                } else if (buffer[i] == 'p') {
+                    for (j = 0; ((i < BUFFERSIZE) && (j < BUFFERSIZE)); ++i, ++j)
+                        buffer[j] = buffer[i];
+
+                    leftover = 1; //set leftover to 1 thus skipping read method
+                } else leftover = 0; //allow read method to be executed
+            }
+        } else if ((buffer[0] != 'p') && (buffer[0] != 'g')) {
+            //Protocol Broken here
+            free(buf_token);
+            buf_token = NULL;
+            numberof_bytes = 0;
+            if(new_sockfd > 0){
+                close(new_sockfd);  //Terminate the connection early
+                new_sockfd = -1;
+            }
+            continue;
+        }
+        if(buf_token != NULL){
+            free(buf_token);
+            buf_token = NULL;
+        } //Release temporary memory used for each request commmand (buffer token)
+    }
+    //Cleanup of allocated memory
+    if(buffer != NULL){free(buffer);}
+    if(buf_token != NULL){free(buf_token);}
+    //Closing the socket thread-side
+    if(new_sockfd > 0){
+        close(new_sockfd);
+        new_sockfd = -1;
+    } //Thread succesfully closes the connection
+    return NULL;
+}
+
 int main(int argc, char *argv[]){
     int i = 1, sockfd = 0, new_sockfd = 0;
     char *port_number = NULL;
@@ -154,6 +414,22 @@ int main(int argc, char *argv[]){
     if(pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED) != 0){
         perror("Thread set detached state failed");
         exit(EXIT_FAILURE);
+    }
+    for( ; uninterrupted ; ) { //Run only if no interrupt is received
+        address_size = sizeof(client_address);
+        new_sockfd = accept(sockfd, (struct sockaddr *) &client_address, &address_size);
+        if (new_sockfd == -1) {
+            if (errno == EINTR) { //Caught Interrupting Signal!! (Sigint/Sigkill)
+                break; //escape the main loop, go to the cleanup section
+            } else { //Any other error (network related)
+                perror("Accept: failed");
+                continue;
+            }
+        }
+        if(pthread_create(&thread_id, &thread_attr, &treat_requests_function, (void *)(long int)new_sockfd) != 0){
+            perror("Thread creation failed: ");
+            exit(EXIT_FAILURE);
+        }
     }
     //Cleanup of allocated memory
     if(port_number != NULL){free(port_number);}
