@@ -199,5 +199,31 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     } //equivalent to signal(SIGCHLD,signal_child_handler);
 
+    //Cleanup of allocated memory
+    if(port_number != NULL){free(port_number);}
+    if(buffer != NULL){free(buffer);}
+    if(buf_token != NULL){free(buf_token);}
+    //Cleanup of net structs/sockets
+    freeaddrinfo(server_info);
+    close(sockfd);
+    if(new_sockfd > 0){
+        close(new_sockfd);  //Close the connection in case of interrupt above
+        new_sockfd = -1;
+    }
+    kill(pid,SIGINT); //Kill forked child
+    while((pid = waitpid(-1, NULL, WNOHANG)) > 0); //Wait all Child processes to exit()
+
+    /*
+        Cleanup of every store field and store itself.
+        The content of the node is deleted, then the node itself.
+        Deleting nodes from start to end.
+    */
+
+    if(shmdt(kvstore) == -1){ //Detaching from shared memory segment
+        perror("Shmdt Failed: ");
+        exit(EXIT_FAILURE);
+    }
+    shmctl(shared_mem_id, IPC_RMID, NULL); //Deleting the shared memory segment
+    semctl(data_semaphore, 0, IPC_RMID); //Deleting the semaphore
     return 0;
 }
