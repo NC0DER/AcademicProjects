@@ -40,3 +40,16 @@ int data_semaphore;
 struct sembuf up;
 struct sembuf down;
 
+char *get(char *key){
+    int i = 0;
+    if(kvstore == NULL)
+        return NULL; //kvstore is empty, no element to return.
+    for(i = 0; i < 2000; ++i){
+        if(strncmp(key, kvstore[i].key, 1025) == 0) //Key found, return the value.
+            return kvstore[i].value;
+    }
+    /*If for doesn't return, then there is no next node.
+      No key has been found on record, and the record is finished. */
+    return NULL;
+}
+
