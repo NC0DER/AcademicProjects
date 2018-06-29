@@ -38,3 +38,15 @@ pthread_mutex_t data_mutex = PTHREAD_MUTEX_INITIALIZER;
       while another thread, also calls put()/get(), thus avoiding the race condition
       on this globally shared memory segment (key value store)
 */
+char *get(char *key){
+    if(kvstore == NULL)
+        return NULL; //store is empty, no element to return.
+    for(ptr = &kvstore; *ptr != NULL; ptr = &(*ptr)->next_node){
+        if(strncmp(key, (*ptr)->key, 1025) == 0) //Key found, return the value.
+            return (*ptr)->value;
+    }
+    /*If for doesn't return, then there is no next node.
+      No key has been found on record, and the record is finished. */
+    return NULL;
+}
+
