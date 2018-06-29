@@ -87,3 +87,21 @@ void handle_cleanup(int signal_flag)
     uninterrupted = 0;
 }
 
+int main(int argc, char *argv[]){
+    int i = 1, j = 0, sockfd = 0, new_sockfd = 0;
+    ssize_t numberof_bytes = 0;
+    size_t size = 0;
+    char *port_number = NULL;
+    char *buf_token = NULL;
+    char *returned = NULL;
+    char *buffer = malloc(sizeof(*buffer) * BUFFERSIZE);
+    struct sigaction sigint_action;
+    struct addrinfo address_info, *server_info, *pntr;
+    struct sockaddr_storage client_address; // connector's address information
+    socklen_t address_size;
+    
+	struct kvstore_node* temp = NULL;
+    kvstore = NULL;
+
+    return 0;
+}
