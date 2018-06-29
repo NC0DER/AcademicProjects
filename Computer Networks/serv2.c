@@ -155,5 +155,49 @@ int main(int argc, char *argv[]){
         memset(kvstore[i].value, 0, 1025);
     }
 
+    port_number=strdup(argv[1]);
+
+    memset(&address_info,0,sizeof(address_info));
+    address_info.ai_family = AF_UNSPEC;
+    address_info.ai_socktype = SOCK_STREAM;
+    address_info.ai_flags = AI_PASSIVE; //uses the IP of this computer
+
+    if(getaddrinfo(NULL, port_number, &address_info, &server_info) != 0){ //returns nonzero on error
+        perror("getaddrinfo failed: ");
+        exit(EXIT_FAILURE);
+    }
+    i = 1;
+    //Loop through all the results and connect to the first socket possible
+    for(pntr = server_info; pntr != NULL; pntr = pntr->ai_next){
+        sockfd = socket(pntr->ai_family, pntr->ai_socktype, pntr->ai_protocol);
+        if (sockfd == -1){perror("Server Socket failed: "); continue;}
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(i), sizeof(int)) == -1){perror("Setsockopt failed: "); exit(EXIT_FAILURE);}
+        if (bind(sockfd, pntr->ai_addr, pntr->ai_addrlen) == -1){close(sockfd); perror("Bind failed: "); continue;}
+        break;
+    }
+    if (pntr == NULL){perror("Failed to bind to client "); exit(EXIT_FAILURE);}
+    if (listen(sockfd, BACKLOG) == -1){perror("Listen Failed: "); exit(EXIT_FAILURE);}
+
+    memset(&sigint_action, 0, sizeof(sigint_action));
+    sigint_action.sa_handler = handle_cleanup; //setting handler for SIGINT
+    sigemptyset(&sigint_action.sa_mask); //garbage values on flags' memory cause seg_fault during sigaction.
+    if (sigaction(SIGINT, &sigint_action, NULL) == -1) {
+        perror("Action for Sigint failed: ");
+        exit(EXIT_FAILURE);
+    } //equivalent to signal(SIGINT,handle_cleanup);
+    sigint_action.sa_flags = SA_RESTART;
+
+    //GNU 24.3.5 Flags for sigaction
+    //Most of the time, SA_RESTART is a good value to use for this field.
+
+    memset(&sigchld_action, 0, sizeof(sigchld_action));
+    sigchld_action.sa_handler = signal_child_handler; // reap all dead processes
+    sigemptyset(&sigchld_action.sa_mask); //setting handler for SIGCHLD
+    sigchld_action.sa_flags = SA_RESTART;
+    if (sigaction(SIGCHLD, &sigchld_action, NULL) == -1) {
+        perror("Action for Sigchld failed: ");
+        exit(EXIT_FAILURE);
+    } //equivalent to signal(SIGCHLD,signal_child_handler);
+
     return 0;
 }
