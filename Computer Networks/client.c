@@ -178,6 +178,18 @@ int main(int argc, char *argv[]){
                  ++i; //put request is 1 operand longer of get request
             }
         }  
+        else{ //No get/put command
+            perror("Syntax: ./client <server_name> <port_number> (put <key> <value> || get <key>)+ ");
+            //Cleanup of allocated memory
+            free(server_name);
+            free(port_number);
+            free(buffer);
+            free(buf_token);
+            //Cleanup of net structs/sockets
+            freeaddrinfo(server_info);
+            close(sockfd);
+            exit(EXIT_FAILURE);
+        }
     }    
     //Cleanup of allocated memory
     free(server_name);
