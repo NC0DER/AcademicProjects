@@ -54,3 +54,44 @@ char *get(char *key){
     return NULL;
 }
 
+void put(char *key, char *value){
+    int i = 0, found = 0;
+    for(i = 0; i < 1000; ++i){
+        if(kvstore[i].key[0] == '\0')
+            break; //reached last node of current record which is empty
+        else if(strncmp(key, kvstore[i].key, 1025) == 0){ //Key found, overwrite new value.
+            memmove(kvstore[i].value , value, 1025);
+            kvstore[i].value[1024] = '\0'; //Null terminate for safety
+            found = 1;
+            break;
+        }
+    }
+    if(found) return;
+    /*If key is found, the call simply returns with no value(void put).
+      i currently points to last empty next_node.
+      The new element is added to the end of the list. */
+
+    memmove(kvstore[i].key, key, 1025);
+    kvstore[i].key[1024] = '\0'; //Null terminate for safety
+    memmove(kvstore[i].value, value, 1025);
+    kvstore[i].value[1024] = '\0'; //Null terminate for safety
+    return; //New node successfully created return.
+}
+
+ssize_t writen(int fd, const void *vptr, size_t n){ //Wrapper function from Stevens book, page 78.
+    size_t nleft;
+    ssize_t nwriten;
+    const char *ptr;
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0){
+        if ( ((nwriten = write(fd, ptr, nleft)) <= 0 ) ){
+            if (errno == EINTR) nwriten = 0; /* and call write() again */
+            else return -1; /* error */
+        }
+        nleft -= nwriten;
+        ptr += nwriten;
+    }
+    return n;
+}
+
