@@ -28,3 +28,29 @@ void handle_cleanup(int signal_flag)
     uninterrupted = 0;
 }
 
+struct kvstore_node{
+    char key[1025];
+    char value[1025];
+};
+
+struct kvstore_node* kvstore = NULL;
+size_t shared_mem_size;
+int shared_mem_id, data_semaphore, connect_semaphore;
+struct sembuf up;
+struct sembuf down;
+
+char *get(char *key){
+    int i = 0;
+    if(kvstore == NULL)
+        return NULL; //kvstore is empty, no element to return.
+    for(i = 0; i < 1000; ++i){
+        if(kvstore[i].key[0] == '\0')
+            break; //reached last node of current record which is empty
+        else if(strncmp(key, kvstore[i].key, 1025) == 0) //Key found, return the value.
+            return kvstore[i].value;
+    }
+    /*If for doesn't return, then there is no next node.
+      No key has been found on record, and the record is finished. */
+    return NULL;
+}
+
