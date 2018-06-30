@@ -53,3 +53,7 @@ void Ship::setX(int x)
 {
     this->x = x;
 }
+void Ship::setY(int y)
+{
+    this->y = y;
+}
