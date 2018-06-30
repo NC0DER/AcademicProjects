@@ -122,3 +122,15 @@ void Sea::setLoot(int loot)
 void Sea::setWeather(int weather){
     this->weather = std::abs(weather);
 }
+Sea& Sea::operator++()
+{
+    if ((++weather) == 11)
+        weather-=5;
+    return *this;
+}
+Sea& Sea::operator--()
+{
+    if ((--weather) <= 0)
+        weather++;
+    return *this;
+}
