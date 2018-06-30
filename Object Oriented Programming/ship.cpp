@@ -89,3 +89,7 @@ int Ship::getTotalDmgDealt()const
 {
      return TotalDmgDealt;
 }
+void Ship::setTotalDmgDealt(int x)
+{
+    TotalDmgDealt += x;
+}
