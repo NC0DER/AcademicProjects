@@ -70,3 +70,23 @@ void Recon::mov(Sea** Map)
 	}
 }
 
+void Recon::func(Sea** Map)
+{
+	int x_ref = getX();
+	int y_ref = getY();
+
+	if (Map[x_ref][y_ref].getLoot() > 0)
+	{
+		setGold(Map[x_ref][y_ref].getLoot());
+		std::cout << name << " has discovered a treasure box (+" << Map[x_ref][y_ref].getLoot() << " gold)" << std::endl;
+		setTotalGold(Map[x_ref][y_ref].getLoot());
+		Map[x_ref][y_ref].setLoot(0);
+	}
+	if (Map[x_ref][y_ref].getWeather() >= 6)
+	{
+		setHP(-CUSTOM_HP);
+		std::cout << name << " has taken " << CUSTOM_HP << " damage from large waves and strong winds!" << std::endl;
+		setTotalDmgTaken(CUSTOM_HP);
+	}
+	std::cout << std::endl;
+}
