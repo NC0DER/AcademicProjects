@@ -73,4 +73,21 @@ public:
     Ship(const Ship& that) = delete;//Non-copyable -> Protection from object slicing when casting
     Ship& operator=(const Ship& that) = delete;//Non-reassignable -> Protection from object slicing when casting
 };
+
+class Sea{
+private:
+    int weather; //1-10
+    int loot;
+    bool isDock;
+public:
+    static int count_ref;
+    Ship* place;
+    Sea(){
+        weather = loot = 0;
+        isDock = 0;
+        place = NULL;
+    }
+    ~Sea(){
+        std::cout<< "Sea Tile #" << std::setw(2) << ++count_ref << " has been destroyed!" << std::endl;
+    }
 };
