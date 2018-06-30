@@ -119,3 +119,6 @@ void Sea::setLoot(int loot)
 {
     this->loot = loot;
 }
+void Sea::setWeather(int weather){
+    this->weather = std::abs(weather);
+}
