@@ -57,3 +57,7 @@ void Ship::setY(int y)
 {
     this->y = y;
 }
+void Ship::setTotalMov(int mov)
+{
+    TotalMov += mov;
+}
