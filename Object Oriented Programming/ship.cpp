@@ -111,3 +111,7 @@ void Sea::setisDock(bool i)
 {
     isDock = i;
 }
+int Sea::getLoot()const
+{
+    return loot;
+}
