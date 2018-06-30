@@ -41,3 +41,7 @@ int Ship::getAP()const
 {
     return AP;
 }
+int Ship::getX()const
+{
+    return x;
+}
