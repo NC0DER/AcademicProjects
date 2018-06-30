@@ -45,3 +45,7 @@ int Ship::getX()const
 {
     return x;
 }
+int Ship::getY()const
+{
+    return y;
+}
