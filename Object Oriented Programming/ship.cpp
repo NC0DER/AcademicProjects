@@ -37,3 +37,7 @@ int Ship::getTotalMov()const
 {
     return TotalMov;
 }
+int Ship::getAP()const
+{
+    return AP;
+}
