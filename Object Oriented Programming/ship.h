@@ -46,5 +46,31 @@ public:
     ~Ship(){
         std::cout << name << " (" << type << " type) has been destroyed!!" << std::endl << std::endl;
     }
+public:
+    std::string getName()const;
+    std::string getType()const;
+    int getID()const;
+    int getTotalGold()const;
+    int getGold()const;
+    int getTotalDmgTaken()const;
+    int getHP()const;
+    int getmaxHP()const;
+    void setHP(int HP);
+    int getTotalMov()const;
+    void setTotalMov(int);
+    int getAP()const;
+    int getX()const;
+    int getY()const;
+    void setTotalGold(int);
+    void setGold(int);
+    void setX(int);
+    void setY(int);
+    void setTotalDmgTaken(int);
+    int getTotalDmgDealt()const;
+    void setTotalDmgDealt(int);
+    friend std::istream& operator>>(std::istream& input , Ship &S);
+    friend std::ostream& operator<<(std::ostream& output, Ship &S);//delete keyword after following declaration is C11 syntax
+    Ship(const Ship& that) = delete;//Non-copyable -> Protection from object slicing when casting
+    Ship& operator=(const Ship& that) = delete;//Non-reassignable -> Protection from object slicing when casting
 };
 };
