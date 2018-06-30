@@ -21,3 +21,7 @@ int Ship::getID()const
 {
     return curr_id;
 }
+int Ship::getTotalGold()const
+{
+    return TotalGold;
+}
