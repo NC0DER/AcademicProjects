@@ -25,3 +25,7 @@ int Ship::getTotalGold()const
 {
     return TotalGold;
 }
+int Ship::getGold()const
+{
+    return gold;
+}
