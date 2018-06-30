@@ -32,6 +32,213 @@ void Menu(std::vector<Ship *>& vec, Sea **map);
 bool Exit_flag = false;
 int main()
 {
+	srand(time(NULL));
+	std::default_random_engine generator(time(0));
+	std::uniform_int_distribution<int> range1(1, 4);  // generates number in the range 1..4 (ships start on good weather)
+	std::uniform_int_distribution<int> range2(0, 1);  //generates +1 or -1 for dynamic random weather
+	std::uniform_int_distribution<int> rangeC(0, _SIZE_ - 1); //Coordinates(x,y) generator
+	std::uniform_int_distribution<int> rangeL(0, 5); //generates number for Loot of map
+
+	auto dice = std::bind(range1, generator);
+	auto dice01 = std::bind(range2, generator);
+	auto diceL = std::bind(rangeL, generator);
+
+	int rand_value = 0;
+	int static turn = 1;
+	int Gold = 0;
+
+	std::vector<Ship*> ship;
+
+	Sea** Map = new Sea*[_SIZE_];
+	for (int i = 0; i < _SIZE_; i++)
+		Map[i] = new Sea[_SIZE_];
+
+	// Initialize Simulation
+
+	try{
+		Ship * s1 = new Trade("Merchant Of Venice");
+		Ship * s2 = new Medic();
+		Ship * s3 = new Pirate("The Flying Dutch");
+		Ship * s4 = new Recon();
+
+		s1->setX(1);
+		s1->setY(1);
+
+		Map[1][1].place = s1;
+		ship.push_back(s1);
+
+		s2->setX(3);
+		s2->setY(2);
+
+		Map[3][2].place = s2;
+		ship.push_back(s2);
+
+   		s3->setX(2);
+		s3->setY(2);
+
+		Map[2][2].place = s3;
+		ship.push_back(s3);
+
+		s4->setX(0);
+		s4->setY(2);
+
+		Map[0][2].place = s4;
+		ship.push_back(s4);
+
+	}
+	catch (std::bad_alloc& ba)
+	{
+		std::cerr << "On Ship Creation bad allocation was caught: " << ba.what() << '\n';
+		mpause();
+	}
+	//Default Ships(In case User doesn't add any ships)
+
+	Map[0][0].setisDock(1);
+	Map[0][_SIZE_ - 1].setisDock(1);
+	Map[_SIZE_ - 1][0].setisDock(1);
+	Map[_SIZE_ - 1][_SIZE_ - 1].setisDock(1);
+
+
+	std::cout << " --------------- " << std::endl
+	          << "|Ship Simulation|" << std::endl
+	          << " --------------- " << std::endl << std::endl;
+
+	std::cout << "**Every Second Round the User can access a menu of options by pressing M then enter" << std::endl;
+	std::cout << "Here's a list of predefined default ships:" << std::endl << std::endl;
+
+	for (int i = 0; i < ship.size(); i++)
+		std::cout << *ship[i];
+
+
+	std::cout << "This is a visualization of randomly initialized loot across the Map" << std::endl << std::endl;
+	for (int i = 0; i < _SIZE_; i++)
+	{
+		std::cout << "\t";
+		for (int j = 0; j < _SIZE_; j++)
+		{
+			rand_value = diceL();
+			Map[i][j].setLoot(rand_value * 0.1 * START_GOLD);
+			std::cout << std::setw(2) << Map[i][j].getLoot() << "  ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	std::cout << "This is a visualization of randomly initialized weather across the Map" << std::endl << std::endl;
+	for (int i = 0; i < _SIZE_; i++)
+	{
+		std::cout << "\t";
+		for (int j = 0; j < _SIZE_; j++)
+		{
+			rand_value = dice();
+			Map[i][j].setWeather(rand_value);
+			std::cout << std::setw(2) << Map[i][j].getWeather() << "  ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Scroll Up to see the starting data of simulation and then..." << std::endl;
+	mpause();
+	//Main Loop of Simulation
+	while (true)
+	{
+		std::cout << std::string(3, '\n');
+		std::cout << "\t\t[ Turn " << turn << " ]" << std::endl << std::endl;
+		for (int i = 0; i < ship.size(); i++)
+		{
+			ship[i]->mov(Map);
+			msleep(ZzZ);
+			ship[i]->func(Map);
+			msleep(ZzZ);
+
+			//Simulation Termination Check 1
+			if ((ship[i]->getGold()) >= Reach_Gold) //If a ship reaches a certain amount of gold
+			{
+				std::cout << ship[i]->getName() << " has reached treasure goal of " << Reach_Gold << " gold" << std::endl;
+				goto End;//End Simulation
+			}
+			for (int k = 0; k < ship.size(); k++) //Ship Removal Check
+			{
+				if (ship[k]->getHP() <= 0)
+				{
+					if ((ship[k]->getGold()) > 0)
+					{
+						Map[ship[k]->getX()][ship[k]->getY()].setLoot(ship[k]->getGold());
+						std::cout << "In Area( " << ship[k]->getX() << "," << ship[k]->getY() << " ) a destroyed ship has dropped " << ship[k]->getGold() << " gold" << std::endl;
+					}
+					Map[ship[k]->getX()][ship[k]->getY()].place = NULL;
+					std::cout << Map[ship[k]->getX()][ship[k]->getY()];
+					delete ship[k];
+					ship.erase(ship.begin() + k);
+					ship.resize(ship.size());
+				}
+			}
+
+		}
+
+		if (ship.empty()) //Simulation Termination Check 2
+		{
+			std::cout << "All Ships have been destroyed" << std::endl << std::endl;
+			goto End;
+		}
+
+		//Weather Randomization for next round
+		for (int i = 0; i < _SIZE_; i++)
+		{
+			for (int j = 0; j < _SIZE_; j++)
+			{
+				rand_value = dice01();
+				switch (rand_value)
+				{
+				case 0: ++Map[i][j];
+					break;
+				case 1: --Map[i][j];
+					break;
+				default:
+					std::cout << "Execution of weather Randomizer should not be here" << std::endl;
+				}
+			}
+		}
+
+		if ((turn % 2) == 0)
+		{
+			std::string in = " ";
+			std::cin.sync();
+			mpause();
+			std::cout << "Press M to enter user menu or Enter <-' to continue: ";
+			std::getline(std::cin, in);
+			if (in == "M" || (in == "m")){
+				do{
+					Menu(ship, Map);
+				} while (!Exit_flag);
+			}
+		}
+		turn++;
+	}
+
+	End:
+		if (!ship.empty())
+		{
+			std::cout << "Ships Left: " << std::endl << std::endl;
+			for (int i = 0; i < ship.size(); i++) std::cout << *ship[i];
+		}
+		for (int i = 0; i < ship.size(); i++)
+		{
+			if (!ship.empty())
+			{
+				delete ship[i];
+			}
+		}
+		ship.clear();
+		for (int i = 0; i < _SIZE_; i++)
+		{
+
+		  delete[] Map[i];
+		}
+		delete[] Map;
+		std::cout << std::endl << "Map of Sea tiles has been succesfully deallocated." << std::endl << std::endl;
+		std::cout << "\t~Simulation has been terminated succesfully~" << std::endl << std::endl;
+		mpause();
 		return 0;
 }
 
