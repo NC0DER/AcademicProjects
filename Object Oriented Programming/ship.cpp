@@ -93,3 +93,7 @@ void Ship::setTotalDmgDealt(int x)
 {
     TotalDmgDealt += x;
 }
+int Sea::getWeather()const
+{
+    return weather;
+}
