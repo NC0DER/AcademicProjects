@@ -97,3 +97,7 @@ int Sea::getWeather()const
 {
     return weather;
 }
+bool Sea::getisDock()const
+{
+    return isDock;
+}
