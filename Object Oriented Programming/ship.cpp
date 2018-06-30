@@ -10,3 +10,10 @@ std::string Ship::getName()const
     }
     catch (std::bad_alloc& ba){}
 }
+std::string Ship::getType()const
+{
+    try{
+        return type;
+    }
+    catch (std::bad_alloc& ba){}
+}
