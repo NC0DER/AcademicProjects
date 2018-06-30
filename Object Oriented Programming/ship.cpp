@@ -77,3 +77,7 @@ int Ship::getHP()const
 {
     return HP;
 }
+int Ship::getmaxHP()const
+{
+    return maxHP;
+}
