@@ -73,3 +73,7 @@ void Ship::setGold(int g)
 {
     gold+=g;
 }
+int Ship::getHP()const
+{
+    return HP;
+}
