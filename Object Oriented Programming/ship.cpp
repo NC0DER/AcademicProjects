@@ -275,3 +275,9 @@ std::istream& operator>>(std::istream& input, Sea &s)
     return input;
 }
 
+int mod(int a, int b)
+{
+    int result;
+    result = a % b;
+    return result >= 0 ? result : result += b;
+}
