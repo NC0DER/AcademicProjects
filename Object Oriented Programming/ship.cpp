@@ -17,3 +17,7 @@ std::string Ship::getType()const
     }
     catch (std::bad_alloc& ba){}
 }
+int Ship::getID()const
+{
+    return curr_id;
+}
