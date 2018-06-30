@@ -90,4 +90,17 @@ public:
     ~Sea(){
         std::cout<< "Sea Tile #" << std::setw(2) << ++count_ref << " has been destroyed!" << std::endl;
     }
+    int getWeather()const;
+    int getLoot()const;
+    bool gethasShip()const;
+    bool getisDock()const;
+    void setisDock(bool);
+    void setLoot(int);
+    void setWeather(int);
+    friend std::ostream& operator<<(std::ostream& output, Sea &s);
+    friend std::istream& operator>>(std::istream& input, Sea &s);
+    Sea& operator++();
+    Sea& operator--();
 };
+int mod(int a, int b);
+#endif
