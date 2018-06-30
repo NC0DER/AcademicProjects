@@ -49,3 +49,7 @@ int Ship::getY()const
 {
     return y;
 }
+void Ship::setX(int x)
+{
+    this->x = x;
+}
