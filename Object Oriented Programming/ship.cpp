@@ -61,3 +61,7 @@ void Ship::setTotalMov(int mov)
 {
     TotalMov += mov;
 }
+void Ship::setTotalDmgTaken(int h)
+{
+    TotalDmgTaken+=h;
+}
