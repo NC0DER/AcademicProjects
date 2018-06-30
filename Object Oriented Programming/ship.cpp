@@ -69,3 +69,7 @@ void Ship::setTotalGold(int g)
 {
     TotalGold+=g;
 }
+void Ship::setGold(int g)
+{
+    gold+=g;
+}
