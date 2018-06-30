@@ -115,3 +115,7 @@ int Sea::getLoot()const
 {
     return loot;
 }
+void Sea::setLoot(int loot)
+{
+    this->loot = loot;
+}
