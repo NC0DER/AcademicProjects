@@ -48,3 +48,10 @@ void msleep(int sleep_time)
 
 #endif
 }
+
+void mpause()
+{
+	std::cout << "Press Enter <-' to continue..." << std::endl;
+	std::cin.ignore(200, '\n');
+}
+
