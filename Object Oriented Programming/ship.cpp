@@ -29,3 +29,7 @@ int Ship::getGold()const
 {
     return gold;
 }
+int Ship::getTotalDmgTaken()const
+{
+    return TotalDmgTaken;
+}
