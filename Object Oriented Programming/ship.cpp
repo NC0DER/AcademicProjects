@@ -65,3 +65,7 @@ void Ship::setTotalDmgTaken(int h)
 {
     TotalDmgTaken+=h;
 }
+void Ship::setTotalGold(int g)
+{
+    TotalGold+=g;
+}
