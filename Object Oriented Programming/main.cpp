@@ -34,3 +34,17 @@ int main()
 {
 		return 0;
 }
+
+void msleep(int sleep_time)
+{
+#ifdef __gnu_linux__
+
+	usleep(sleep_time * 1000);   // usleep accepts sleep time in microseconds (1 thousandth of a millisecond)
+
+#endif
+#ifdef _WIN32
+
+	Sleep(sleep_time);
+
+#endif
+}
