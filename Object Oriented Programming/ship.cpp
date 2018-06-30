@@ -33,3 +33,7 @@ int Ship::getTotalDmgTaken()const
 {
     return TotalDmgTaken;
 }
+int Ship::getTotalMov()const
+{
+    return TotalMov;
+}
