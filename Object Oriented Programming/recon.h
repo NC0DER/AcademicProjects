@@ -20,6 +20,5 @@ class Recon : public Ship
     protected:
 		void func(Sea** Map);
 		void mov(Sea** Map);
-
 };
 #endif
