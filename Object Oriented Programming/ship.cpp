@@ -85,3 +85,7 @@ void Ship::setHP(int HP)
 {
      this->HP += HP;
 }
+int Ship::getTotalDmgDealt()const
+{
+     return TotalDmgDealt;
+}
