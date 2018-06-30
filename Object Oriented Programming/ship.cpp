@@ -134,3 +134,144 @@ Sea& Sea::operator--()
         weather++;
     return *this;
 }
+std::ostream &operator<<(std::ostream &output, Ship &S)
+{
+    output << S.name << " (" << S.type << " type) " << std::endl
+        << "Id: " << S.curr_id << std::endl
+        << "\tCoordinates: (" << S.x << "," << S.y << ") " << std::endl
+        << "\tHealth Points (" << S.HP << "/" << S.maxHP << ")" << std::endl;
+    if (S.type == "Pirate")
+    {
+        output << "\tPower: " << 0.5*CUSTOM_HP << std::endl
+               << "\tTotal damage dealt: " << S.getTotalDmgDealt() << std::endl
+               << "\tNumber of Moves per round: " << (S.AP)-1 << std::endl;
+    }
+    else output << "\tNumber of Moves per round: " << S.AP << std::endl;
+    output<< "\tTotal Number of moves: " << S.TotalMov << std::endl
+        << "\tTotal damage taken: " << S.TotalDmgTaken << std::endl
+        << "\tGold: " << S.gold << std::endl
+        << "\tTotal Gold: " << S.TotalGold << std::endl << std::endl;
+
+    return output;
+}
+std::istream &operator>>(std::istream &input, Ship &S)
+{
+    std::string in = " ";
+    std::cout << "Set New Coordinates: " << std::endl;
+    std::cout << "\t X = ";
+    while (true) {
+        std::getline(std::cin, in);
+        // This code converts from string to number safely.
+        std::stringstream myStream(in);
+        if ((myStream >> S.x) && (S.x >= 0))
+            break;
+        std::cout << std::endl << "Invalid number, please try again" << std::endl;
+        std::cout << "\t X = ";
+    }
+    std::cout << "\t Y = ";
+    while (true) {
+        std::getline(std::cin, in);
+        // This code converts from string to number safely.
+        std::stringstream myStream(in);
+        if ((myStream >> S.y) && (S.y >= 0))
+            break;
+        std::cout << std::endl << "Invalid number, please try again" << std::endl;
+        std::cout << "\t Y = ";
+    }
+    std::cout << std::endl;
+    return input;
+}
+std::ostream& operator<<(std::ostream& output, Sea &s)
+{
+    if (s.isDock)
+        output << "This area has a harbour";
+    else if (s.gethasShip())
+    {
+        output << "This area is occupied by "
+            << s.place->getName() << " of "
+            << s.place->getType() << " type ";
+    }
+    else output << "This area is free ";
+
+    output << std::endl << std::endl;
+    output << "\tWeather: " << s.weather << std::endl;
+    output << "\tLoot: " << s.loot << std::endl << std::endl;
+    return output;
+}
+std::istream& operator>>(std::istream& input, Sea &s)
+{
+    std::string in = " ";
+    int choice = 0;
+    std::cout << "Choose Modification for this area: " << std::endl;
+    std::cout << "\t1. Build Port" << std::endl;
+    std::cout << "\t2. Remove Port" << std::endl;
+    std::cout << "\t3. Add Treasure box" << std::endl;
+    std::cout << "\t4. Remove Treasure box" << std::endl << std::endl;
+
+    std::cout << "Input your number of choice: ";
+    while (true) {
+        std::getline(std::cin, in);
+        // This code converts from string to number safely.
+        std::stringstream myStream(in);
+        if ((myStream >> choice) && (choice <=4) && (choice>0))
+            break;
+        std::cout << std::endl << "Invalid number, please try again" << std::endl;
+        std::cout << "Input your number of choice: ";
+    }
+    std::cout << std::endl;
+
+
+    switch (choice)
+    {
+    case 1: if (s.isDock)
+                std::cout << "This area already has a Port" << std::endl << std::endl;
+            else if (s.gethasShip())
+                std::cout << "This area has a Ship" << std::endl << std::endl;
+            else (s.isDock = true);
+            break;
+    case 2: if (s.isDock)
+                (s.isDock = false);
+            else std::cout << "This area doesn't have a Port" << std::endl << std::endl;
+            break;
+    case 3: if (s.loot > 0)
+    {
+        std::cout << "This area has a treasure box with +" << s.loot << " gold" << std::endl;
+        std::cout << "Input the new amount of gold for the treasure box: ";
+        while (true) {
+            std::getline(std::cin, in);
+            // This code converts from string to number safely.
+            std::stringstream myStream(in);
+            if ((myStream >> s.loot) && (s.loot > 0))
+                break;
+            std::cout << std::endl << "Invalid number, please try again" << std::endl;
+            std::cout << "Input the new amount of gold for the treasure box: ";
+        }
+        std::cout << std::endl;
+    }
+        else
+        {
+            std::cout << "This area has no treasure box" << std::endl;
+            std::cout << "Input the new amount of gold for the treasure box: ";
+            while (true) {
+                std::getline(std::cin, in);
+                // This code converts from string to number safely.
+                std::stringstream myStream(in);
+                if ((myStream >> s.loot) && (s.loot > 0))
+                    break;
+                std::cout << std::endl << "Invalid number, please try again" << std::endl;
+                std::cout << "Input the new amount of gold for the treasure box: ";
+            }
+            std::cout << std::endl;
+        }
+            break;
+    case 4: if (s.loot == 0)
+                std::cout << "This area has no treasure box " << std::endl << std::endl;
+            else{
+                std::cout << "Treasure box with +" << s.loot << " gold " << "has been removed " << std::endl << std::endl;
+                    s.loot = 0;
+                }
+            break;
+    }
+    return input;
+}
+
