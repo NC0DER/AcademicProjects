@@ -101,3 +101,9 @@ bool Sea::getisDock()const
 {
     return isDock;
 }
+bool Sea::gethasShip()const
+{
+    if (place == NULL)
+        return false;
+    else return true;
+}
