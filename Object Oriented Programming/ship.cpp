@@ -81,3 +81,7 @@ int Ship::getmaxHP()const
 {
     return maxHP;
 }
+void Ship::setHP(int HP)
+{
+     this->HP += HP;
+}
