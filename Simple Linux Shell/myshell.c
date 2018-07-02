@@ -49,6 +49,47 @@ int main() {
                 sh_buffer[i] = ' ';
         sh_buffer[size - 1] = '\0';
 
+        //Word Counting
+        space = 0;
+        for (i = 1; i < size; ++i) { //First char is presumed to be non space
+            if ((sh_buffer[i] == ' ') && (sh_buffer[i - 1] != ' '))
+                ++space;
+        }
+        if (sh_buffer[size - 2] != ' ') //word' '\n is counted as extra word falsely but space needs to increment once at the end
+            ++space; //n-1 spaces inbetween indicate n words
+
+        //cd shell builtin command
+        if (strstr(sh_buffer, "cd") != NULL) {
+            int j = 0;
+            char * token_ = NULL;
+            char * rest_ = NULL;
+            char * arg[space];
+
+            rest_ = sh_buffer;
+
+            while ((token_ = strtok_r(rest_, " ", & rest_))) {
+                arg[j] = token_;
+                j = j + 1;
+            }
+
+            if (space == 1) { // "cd \n" , "cd\n"
+                if (chdir("/home") == -1) {
+                    //char* args[1] = getcwd(NULL,PATH_MAX);
+                    if (arg[1])
+                        fprintf(stderr, "cd: %s: %s\n", arg[1], strerror(errno));
+                    else
+                        fprintf(stderr, "cd: %s\n", strerror(errno));
+
+                }
+                continue; //goto the end of loop because cd should not be passed at exec()
+            }
+            if (space == 2) {
+                if (strcmp(arg[1], "~") == 0) { // "cd ~\n"
+                    if (chdir("/home") == -1) {
+                        if (arg[1])
+                            fprintf(stderr, "cd: %s: %s\n", arg[1], strerror(errno));
+                        else
+                            fprintf(stderr, "cd: %s\n", strerror(errno));
         {
             //Allocating char array for execvp depending on the word count (variably-sized number of args)
             char * params[space];
