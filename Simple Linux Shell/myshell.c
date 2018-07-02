@@ -49,6 +49,89 @@ int main() {
                 sh_buffer[i] = ' ';
         sh_buffer[size - 1] = '\0';
 
+        //Pipe Counting & Execution
+        pipes = 1;
+        for (i = 1; i < size; ++i) { //First char is presumed to be non space
+            if (sh_buffer[i] == '|')
+                ++pipes;
+        }
+        if (pipes >= 2) {
+            int i;
+            int k = 0;
+            pid_t pid;
+            int j = 0;
+            char * token_ = NULL;
+            char * rest_ = NULL;
+            char temp[(size + (2 * pipes)) + 1];
+
+            for (i = 0; i < size; i++) {
+                temp[k] = sh_buffer[i];
+                if (sh_buffer[i] == '|') {
+                    temp[i] = ' ';
+                    temp[i + 1] = '|';
+                    temp[i + 2] = ' ';
+                    k = k + 2;
+                }
+                k = k + 1;
+            }
+            temp[k] = '\0';
+
+            pid = fork();
+            if (pid < 0) {
+                perror("Fork error: Child Process not created:");
+                exit(EXIT_FAILURE);
+            }
+            if (pid == 0) { //Child Process
+                //Special word Counting for pipes
+                space = 0;
+                for (i = 1; i < size; ++i) { //First char is presumed to be non space
+                    if ((temp[i] == ' ') && (temp[i - 1] != ' ') && (temp[i - 1] != '|'))
+                        ++space;
+                }
+                if (temp[size - 2] != ' ') //word' '\n is counted as extra word falsely but space needs to increment once at the end
+                    ++space; //n-1 spaces inbetween indicate n words
+
+                if (space >= 0) {
+                    const char * args1[space + 1];
+                    const char * args2[space + 1];
+                    struct command cmd[2];
+
+                    rest_ = NULL;
+                    token_ = NULL;
+                    j = 0;
+                    i = 0;
+                    rest_ = temp;
+
+                    while ((token_ = strtok_r(rest_, " ", & rest_))) {
+                        if (strstr(token_, "|") == NULL) {
+                            args1[j] = token_;
+                            j = j + 1;
+                        } else break;
+                    }
+                    args1[j] = NULL;
+
+                    j = 0;
+                    token_ = NULL;
+
+                    while ((token_ = strtok_r(rest_, " ", & rest_))) {
+                        if (strstr(token_, "|") == NULL) {
+                            args2[j] = token_;
+                            j = j + 1;
+                        } else break;
+                    }
+                    args2[j] = NULL;
+
+                    cmd[0].argv = args1;
+                    cmd[1].argv = args2;
+                    com_pipes(2, cmd);
+
+                    continue; //Next loop execution
+                }
+            } else { //Parent Process, waits for all childs
+                while ((pid = wait( & status)) > 0);
+                continue;
+            }
+        }
         //Word Counting
         space = 0;
         for (i = 1; i < size; ++i) { //First char is presumed to be non space
