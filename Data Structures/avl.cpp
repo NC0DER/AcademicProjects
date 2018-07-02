@@ -16,6 +16,26 @@ void AVLTree::fixheight(AVLNode* ptr)
     ptr->height = ((height(ptr->left) > height(ptr->right)) ? height(ptr->left) : height(ptr->right)) + 1;
 }
 
+AVLNode* AVLTree::rotateleft(AVLNode*& ptr)
+{
+    AVLNode* child = ptr->right;
+    ptr->right = child->left;
+    child->left = ptr;
+    fixheight(ptr);
+    fixheight(child);
+    return child;
+}
+
+AVLNode* AVLTree::rotateright(AVLNode*& ptr)
+{
+    AVLNode* child = ptr->left;
+    ptr->left = child->right;
+    child->right = ptr;
+    fixheight(ptr);
+    fixheight(child);
+    return child;
+}
+
 AVLNode* AVLTree::balanceCase(AVLNode*& ptr)
 {
     fixheight(ptr);
