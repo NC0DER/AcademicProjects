@@ -25,3 +25,25 @@ AVLNode* AVLTree::findmin(AVLNode*& ptr)
     return current;
 }
 
+AVLNode* AVLTree::removemin(AVLNode*& ptr)
+{
+    if (ptr->left == 0)
+        return ptr->right;
+    ptr->left = removemin(ptr->left);
+    return balanceCase(ptr);
+}
+
+int AVLTree::deletemin(AVLNode*& ptr)
+{
+    int temp = 0;
+    if (ptr->left == NULL) {
+        temp = ptr->id;
+        ptr = ptr->right;
+        return temp;
+    }
+    else {
+        temp = deletemin(ptr->left);
+        return temp;
+    }
+}
+
