@@ -15,4 +15,23 @@ struct AVLNode{
     }
 };
 
+class AVLTree
+{
+    public:
+        int Access(int, AVLNode*&);
+        void change_pos(int, int, AVLNode*&);
+        void Insert(int, int, AVLNode*&);
+        AVLNode* remove(AVLNode*&, int);
+        void empty(AVLNode*&);
+        int height(AVLNode*);
+        int hb(AVLNode*); //Height Balance Factor
+        void fixheight(AVLNode*);
+        AVLNode* rotateleft(AVLNode*& ptr);
+        AVLNode* rotateright(AVLNode*& ptr);
+        AVLNode* balanceCase(AVLNode*& ptr);
+        AVLNode* findmin(AVLNode*& ptr);
+        int deletemin(AVLNode*& ptr);
+        AVLNode* removemin(AVLNode*& ptr);
+        void preorder(AVLNode*& ptr);
+};
 #endif
