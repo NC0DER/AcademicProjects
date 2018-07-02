@@ -125,6 +125,25 @@ void AVLTree::Insert(int x,int pos, AVLNode*& ptr)
     ptr = balanceCase(ptr);
 }
 
+AVLNode* AVLTree::remove(AVLNode*& ptr, int x) //deleting k key from p tree
+{
+    if (!ptr) return 0;
+    if (x < ptr->id)
+        ptr->left = remove(ptr->left, x);
+    else if (x > ptr->id)
+        ptr->right = remove(ptr->right, x);
+    else {//x == ptr->id
+        AVLNode* l = ptr->left;
+        AVLNode* r = ptr->right;
+        delete ptr;
+        if (!r) return l;
+        AVLNode* min = findmin(l);
+        min->right = removemin(min);
+        min->left = l;
+        return balanceCase(min);
+    }
+    return balanceCase(ptr);
+}
 
 AVLNode* AVLTree::findmin(AVLNode*& ptr)
 {
