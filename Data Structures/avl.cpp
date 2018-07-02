@@ -74,6 +74,16 @@ int AVLTree::Access(int x, AVLNode*& ptr)
     }
 }
 
+void AVLTree::empty(AVLNode*& ptr)
+{
+    if (ptr != NULL) {
+        empty(ptr->right);
+        empty(ptr->left);
+        delete ptr;
+        ptr = NULL;
+    }
+}
+
 void AVLTree::Insert(int x,int pos, AVLNode*& ptr)
 {
     if (ptr == NULL) {
