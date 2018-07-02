@@ -126,3 +126,19 @@ int main() {
     }
     return 0;
 }
+
+void make_process(int input, int output, struct command * com) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        if (input != 0) {
+            dup2(input, 0);
+            close(input);
+        }
+        if (output != 1) {
+            dup2(output, 1);
+            close(output);
+        }
+        execvp(com -> argv[0], (char * const * ) com -> argv);
+    }
+}
+
