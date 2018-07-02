@@ -16,6 +16,22 @@ void AVLTree::fixheight(AVLNode* ptr)
     ptr->height = ((height(ptr->left) > height(ptr->right)) ? height(ptr->left) : height(ptr->right)) + 1;
 }
 
+AVLNode* AVLTree::balanceCase(AVLNode*& ptr)
+{
+    fixheight(ptr);
+    if (hb(ptr) == 2) { //RightLeft or RightRight Case
+        if (hb(ptr->right) < 0) //RightLeft
+            ptr->right = rotateright(ptr->right); //Right Rotation of next node from critical
+        return rotateleft(ptr); //In every case a left rotation will be done
+    }
+    if (hb(ptr) == -2) { //LeftRight or LeftLeft Case
+        if (hb(ptr->left) > 0) //LeftRight
+            ptr->left = rotateleft(ptr->left); //Left Rotation of next node from critical
+        return rotateright(ptr); //In every case a right rotation will be done
+    }
+    return ptr; //Insertion didn't destroy balance
+}
+
 int AVLTree::Access(int x, AVLNode*& ptr)
 {
     if (ptr == NULL) {
