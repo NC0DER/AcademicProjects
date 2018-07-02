@@ -1,6 +1,32 @@
 #include <iostream>
 #include "AvL.h"
 
+void AVLTree::change_pos(int x, int pos, AVLNode*& ptr)
+{
+    if (ptr == NULL) {
+        std::cout << "ID not in AVL." << std::endl;
+        return;
+    }
+    else {
+        if (x > ptr->id)
+            change_pos(x,pos, ptr->right);
+        else if (x < ptr->id)
+            change_pos(x, pos, ptr->left);
+        else if (x == ptr->id)
+        {
+            std::cout << "ID Found: " << ptr->id << "\n";
+            std::cout << "Position in record changed from: " << ptr->pos;
+            ptr->pos = pos;
+            std::cout << " to pos: " << ptr->pos << std::endl;
+            return;
+        }
+        else {
+            std::cout << "ID not in AVL." << std::endl;
+            return;
+        }
+    }
+}
+
 int AVLTree::height(AVLNode* ptr)
 {
     return ptr ? ptr->height : 0;
