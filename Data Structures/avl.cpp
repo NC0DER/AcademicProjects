@@ -47,3 +47,10 @@ int AVLTree::deletemin(AVLNode*& ptr)
     }
 }
 
+void AVLTree::preorder(AVLNode*& ptr)
+{
+    if (ptr == NULL) return;
+    std::cout << (ptr->id) << "\t";
+    preorder(ptr->left);
+    preorder(ptr->right);
+}
