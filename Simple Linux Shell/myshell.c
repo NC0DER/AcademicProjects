@@ -141,7 +141,7 @@ int main() {
         if (sh_buffer[size - 2] != ' ') //word' '\n is counted as extra word falsely but space needs to increment once at the end
             ++space; //n-1 spaces inbetween indicate n words
 
-        //cd shell builtin command
+        //cd shell built-in command
         if (strstr(sh_buffer, "cd") != NULL) {
             int j = 0;
             char * token_ = NULL;
@@ -149,12 +149,10 @@ int main() {
             char * arg[space];
 
             rest_ = sh_buffer;
-
             while ((token_ = strtok_r(rest_, " ", & rest_))) {
                 arg[j] = token_;
                 j = j + 1;
             }
-
             if (space == 1) { // "cd \n" , "cd\n"
                 if (chdir("/home") == -1) {
                     //char* args[1] = getcwd(NULL,PATH_MAX);
@@ -173,6 +171,19 @@ int main() {
                             fprintf(stderr, "cd: %s: %s\n", arg[1], strerror(errno));
                         else
                             fprintf(stderr, "cd: %s\n", strerror(errno));
+                    }
+                    continue;
+                }
+                if(chdir(arg[1]) == -1){
+                    if (arg[1])
+                        fprintf(stderr, "cd: %s: %s\n", arg[1], strerror(errno));
+                    else
+                        fprintf(stderr, "cd: %s\n", strerror(errno));
+		
+                }
+                continue;
+            }
+        }
         {
             //Allocating char array for execvp depending on the word count (variably-sized number of args)
             char * params[space];
@@ -182,7 +193,6 @@ int main() {
                 params[i] = token;
                 i = i + 1;
             }
-
             params[i] = NULL;
             if (params == NULL) perror("Parameters were not recognized: ");
             if (strcmp(params[0], "exit") == 0) break; //Exit command exits this shell
