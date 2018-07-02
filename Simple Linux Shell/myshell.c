@@ -49,5 +49,39 @@ int main() {
                 sh_buffer[i] = ' ';
         sh_buffer[size - 1] = '\0';
 
+        {
+            //Allocating char array for execvp depending on the word count (variably-sized number of args)
+            char * params[space];
+            //Tokenization of Input
+            i = 0;
+            while ((token = strtok_r(rest, " ", & rest))) {
+                params[i] = token;
+                i = i + 1;
+            }
+
+            params[i] = NULL;
+            if (params == NULL) perror("Parameters were not recognized: ");
+            if (strcmp(params[0], "exit") == 0) break; //Exit command exits this shell
+
+            pid = fork();
+            if (pid < 0) {
+                perror("Fork error: Child Process not created:");
+                exit(EXIT_FAILURE);
+            }
+            if (pid == 0) { //Child Process
+                execvp(params[0], params);
+                perror("Exec error");
+                exit(EXIT_FAILURE);
+
+            } else { //Parent Process, waits for all childs
+                while ((pid = wait( & status)) > 0) {
+                    continue;
+                }
+            }
+            rest = NULL;
+            token = NULL;
+            rest = sh_buffer;
+        }
+    }
     return 0;
 }
