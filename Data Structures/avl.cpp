@@ -16,6 +16,28 @@ void AVLTree::fixheight(AVLNode* ptr)
     ptr->height = ((height(ptr->left) > height(ptr->right)) ? height(ptr->left) : height(ptr->right)) + 1;
 }
 
+int AVLTree::Access(int x, AVLNode*& ptr)
+{
+    if (ptr == NULL) {
+        std::cout << "ID not in AVL." << std::endl;
+        return -1;
+    }
+    else {
+        if (x > ptr->id)
+            Access(x, ptr->right);
+        else if (x < ptr->id)
+            Access(x, ptr->left);
+        else if ( x == ptr->id) {
+            std::cout << "ID Found: " << ptr->id << std::endl;
+            return ptr->pos;
+        }
+        else {
+            std::cout << "ID not in AVL." << std::endl;
+            return -1;
+        }
+    }
+}
+
 AVLNode* AVLTree::findmin(AVLNode*& ptr)
 {
     AVLNode* current = ptr;
