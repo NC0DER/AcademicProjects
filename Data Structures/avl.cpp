@@ -16,3 +16,12 @@ void AVLTree::fixheight(AVLNode* ptr)
     ptr->height = ((height(ptr->left) > height(ptr->right)) ? height(ptr->left) : height(ptr->right)) + 1;
 }
 
+AVLNode* AVLTree::findmin(AVLNode*& ptr)
+{
+    AVLNode* current = ptr;
+    /* iterate left to find the mininum leaf */
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
+
