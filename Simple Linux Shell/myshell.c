@@ -142,3 +142,24 @@ void make_process(int input, int output, struct command * com) {
     }
 }
 
+void com_pipes(int n, struct command * com) {
+    int i;
+    int input, fd[2];
+
+    input = 0;
+    // Make all processes but the last of the pipeline
+    for (i = 0; i < n - 1; ++i) {
+        pipe(fd);
+        // fd[1](write end) gets input from the previous iteration
+        make_process(input, fd[1], com + i);
+        //No need for the write end of the pipe, the child will write here
+        close(fd[1]);
+        //The next child will read from this
+        input = fd[0];
+    }
+    // Stdin becomes the read end of the previous pipe and outputs to fd[1]
+    if (input != 0)
+        dup2(input, 0);
+    //Execute current process
+    execvp(com[i].argv[0], (char * const * ) com[i].argv);
+}
