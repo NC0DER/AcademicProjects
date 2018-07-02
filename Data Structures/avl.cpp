@@ -74,6 +74,22 @@ int AVLTree::Access(int x, AVLNode*& ptr)
     }
 }
 
+void AVLTree::Insert(int x,int pos, AVLNode*& ptr)
+{
+    if (ptr == NULL) {
+        ptr = new AVLNode(x,pos);
+    }
+    else if (x == ptr->id) {
+        return;
+    }
+    else if (x < ptr->id)
+        Insert(x,pos, ptr->left);
+    else
+        Insert(x,pos, ptr->right);
+    ptr = balanceCase(ptr);
+}
+
+
 AVLNode* AVLTree::findmin(AVLNode*& ptr)
 {
     AVLNode* current = ptr;
