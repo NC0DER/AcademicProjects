@@ -84,3 +84,26 @@ int main(int argc, char * argv[]) {
     delete root;
     return 0;
 }
+
+
+int InterpolationSearch(Company * Arr, int x, int low, int high) {
+    if ((high - low + 1) < 0 || !Arr) // size = high - low + 1
+    {
+        std::cout << "\nRecord is empty\n";
+        return -1;
+    }
+    high = high - 1; //High has input total size
+    int mid = 0;
+
+    while (!(Arr[high].id == Arr[low].id || x < Arr[low].id || Arr[high].id < x)) {
+        mid = low + (x - Arr[low].id) * ((high - low) / (Arr[high].id - Arr[low].id));
+        if (Arr[mid].id < x){
+            low = mid + 1;
+        } else if (x < Arr[mid].id){
+            high = mid - 1;
+        } else return mid;
+    }
+    if (x == Arr[low].id) {
+        return low;
+    } else return -1;
+}
