@@ -85,6 +85,11 @@ int main(int argc, char * argv[]) {
     return 0;
 }
 
+void mpause() {
+    std::cout << "\n\tPress Enter <-' to continue..." << std::endl;
+    std::cin.ignore(std::numeric_limits < std::streamsize > ::max(), '\n');
+}
+
 void insort(Company * arg, int size) //Company record is nearly sorted-> Ideal Case O(n) for insertion sort
     {
         int k = 0;
