@@ -45,6 +45,36 @@ int main(int argc, char * argv[]) {
     log.numberOfCompanies = 0;
     log.arr = NULL;
 
+    switch (argc) {
+    case 1:
+        {
+            std::cout << "No arguments specified. Running with default:data.csv" << std::endl;
+            filename = "data.csv";
+            break;
+        }
+    case 2:
+        {
+            if (strstr(argv[1], ".csv")) {
+                file_exists = 1;
+                filename = argv[1];
+                std::cout << "File = " << filename << " has valid extension of .csv\n\n";
+            } else {
+                std::cout << "Inappropriate extension, correct usage: *.csv\n" << "Please run the app again with a valid argument!\n\n";
+                return 0;
+            }
+            break;
+        }
+    default:
+        {
+            std::cout << "More than one arguments specified." << "Please run the app again with a valid argument!\n\n";
+            return 0;
+            break;
+        }
+    }
+    mpause();
+    std::ifstream readfile;
+    std::ofstream writefile;
+
     std::cout << "Exiting...." << std::endl;
     if (log.arr) //free arr from previous paths of executions
     {
