@@ -537,6 +537,11 @@ int main(int argc, char * argv[]) {
                 mpause();
                 Case7_End: break;
             }
+        case 8:
+            {
+                exit_flag = true;
+                break;
+            }
         default:
             {
                 break;
