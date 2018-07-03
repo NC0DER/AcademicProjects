@@ -261,6 +261,87 @@ int main(int argc, char * argv[]) {
                 mpause();
                 break;
             }
+        case 3:
+            {
+                if (!(log.arr + 0)) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                Companies temp;
+                temp.arr = (Company * ) malloc((log.numberOfCompanies + 1) * sizeof(Company));
+                if (temp.arr) {
+                    std::cout << "Realloc Succesful\n\n";
+                    for (int m = 0; m < log.numberOfCompanies; ++m) {
+                        temp.arr[m].id = log.arr[m].id;
+                        temp.arr[m].numberOfEmployees = log.arr[m].numberOfEmployees;
+                        int l = 0;
+                        for (l = 0; l < strlen(log.arr[m].summary) + 1; ++l) {
+                            temp.arr[m].summary[l] = log.arr[m].summary[l];
+                        }
+                        for (l = 0; l < strlen(log.arr[m].title) + 1; ++l) {
+                            temp.arr[m].title[l] = log.arr[m].title[l];
+                        }
+                        temp.arr[m].summary[strlen(log.arr[m].summary)] = '\0';
+                        temp.arr[m].title[strlen(log.arr[m].title)] = '\0';
+                        temp.arr[m].employees = (Employee * ) malloc(7 * sizeof(Employee));
+                        for (l = 0; l < log.arr[m].numberOfEmployees; ++l) {
+                            int k = 0;
+                            for (k = 0; k < strlen(log.arr[m].employees[l].firstName) + 1; ++k) {
+                                temp.arr[m].employees[l].firstName[k] = log.arr[m].employees[l].firstName[k];
+                            }
+                            for (k = 0; k < strlen(log.arr[m].employees[l].lastName) + 1; ++k) {
+                                temp.arr[m].employees[l].lastName[k] = log.arr[m].employees[l].lastName[k];
+                            }
+                            temp.arr[m].employees[l].firstName[strlen(log.arr[m].employees[l].firstName)] = '\0';
+                            temp.arr[m].employees[l].lastName[strlen(log.arr[m].employees[l].lastName)] = '\0';
+                        }
+                    }
+
+                    ++log.numberOfCompanies;
+                    temp.numberOfCompanies = (log.numberOfCompanies);
+                    std::cout << "Initialization sucessful. New length of record = " << log.numberOfCompanies << std::endl;
+                    free(log.arr -> employees);
+                    free(log.arr);
+                    log.arr = temp.arr;
+
+                }
+
+                log.arr[log.numberOfCompanies - 1].id = max_id + 1;
+                ++max_id; //Update max_id
+                //AVL record Add
+                tree.Insert(log.arr[log.numberOfCompanies - 1].id, log.numberOfCompanies - 1, root);
+
+                std::string tempst = " ";
+                std::cout << "\nNew Company Name: ";
+                getline(std::cin, tempst);
+                copy2cstr(log.arr[log.numberOfCompanies - 1].title, (tempst.substr(0, 254).c_str()), 255);
+
+                std::cout << "New Summary: ";
+                getline(std::cin, tempst);
+                copy2cstr(log.arr[log.numberOfCompanies - 1].summary, (tempst.substr(0, 2046).c_str()), 2047);
+
+                std::cout << "New Number of Employees, ";
+                int tempsi = 0;
+
+                tempsi = inputInt();
+                log.arr[log.numberOfCompanies - 1].numberOfEmployees = tempsi;
+                log.arr[log.numberOfCompanies - 1].employees = (Employee * ) malloc(7 * sizeof(Employee));
+
+                for (int l = 0; l < tempsi; ++l) {
+                    std::cout << "\nEmployee " << l + 1 << " Name: ";
+                    getline(std::cin, tempst);
+                    copy2cstr(log.arr[log.numberOfCompanies - 1].employees[l].firstName, tempst.substr(0, tempst.size()).c_str(), tempst.size() + 1);
+                    std::cout << "Employee " << l + 1 << " Surname: ";
+                    getline(std::cin, tempst);
+                    copy2cstr(log.arr[log.numberOfCompanies - 1].employees[l].lastName, tempst.substr(0, 54).c_str(), 55);
+
+                }
+                std::cout << "New Company created with the following info:" << std::endl;
+                printComp(log.arr + log.numberOfCompanies - 1);
+                mpause();
+                break;
+            }
         default:
             {
                 break;
