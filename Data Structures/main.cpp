@@ -75,6 +75,30 @@ int main(int argc, char * argv[]) {
     std::ifstream readfile;
     std::ofstream writefile;
 
+    while (!exit_flag) {
+        //Menu:
+        clear_screen();
+        std::cout << "\n\t\t ------------\n";
+        std::cout << "\t\t|Menu Options|\n";
+        std::cout << "\t\t ------------\n";
+
+        std::cout << "\t1. Load companies from file\n";
+        std::cout << "\t2. Save companies to file\n";
+        std::cout << "\t3. Add a company\n";
+        std::cout << "\t4. Delete a company by id\n";
+        std::cout << "\t5. Display a company by id\n";
+        std::cout << "\t6. Display companies\n";
+        std::cout << "\t7. Display companies by surname search\n";
+        std::cout << "\n\t 8.Exit Program\n" << std::endl;
+
+        int choice = 0;
+        std::cout << "Select a Menu Number, ";
+        choice = inputInt();
+
+        std::string line = "";
+        line.reserve(2049);
+
+    }
     std::cout << "Exiting...." << std::endl;
     if (log.arr) //free arr from previous paths of executions
     {
