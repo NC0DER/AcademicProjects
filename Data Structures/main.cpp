@@ -98,6 +98,115 @@ int main(int argc, char * argv[]) {
         std::string line = "";
         line.reserve(2049);
 
+        switch (choice) {
+        case 1:
+            {
+                if (writefile.is_open()){
+                    writefile.close();
+                }
+                readfile.open(filename.c_str(), std::ifstream:: in );
+                readfile.seekg(0, readfile.beg);
+                getline(readfile, line);
+                log.numberOfCompanies = str2int(line);
+                if (log.numberOfCompanies > 0) {
+                    std::cout << "\n" << log.numberOfCompanies << " Companies have been found!\n";
+                } else {
+                    std::cout << "\n\nInvalid Amount of Companies, exiting.....\n";
+                    mpause();
+                    return 0;
+                }
+                if (log.arr) //free arr from previous paths of executions
+                {
+                    free(log.arr -> employees);
+                    free(log.arr);
+                    std::cout << "Deleting previous loaded record.\n" << std::endl;
+                }
+                log.arr = (Company * ) malloc(log.numberOfCompanies * sizeof(Company));
+                if (log.arr) {
+                    std::cout << "Allocating record.... \n\n";
+                }
+                for (int m = 0; m < log.numberOfCompanies; ++m) {
+                    log.arr[m].id = 1;
+                    log.arr[m].numberOfEmployees = 7;
+                    for (int l = 0; l < 10; ++l) {
+                        log.arr[m].summary[l] = '0' + l;
+                        log.arr[m].title[l] = '0' + l;
+                    }
+                    log.arr[m].summary[10] = '\0';
+                    log.arr[m].title[10] = '\0';
+                    log.arr[m].employees = (Employee * ) malloc(7 * sizeof(Employee));
+                    for (int l = 0; l < 7; ++l) {
+                        for (int k = 0; k < 10; ++k) {
+                            log.arr[m].employees[l].firstName[k] = '0' + k;
+                            log.arr[m].employees[l].lastName[k] = '0' + k;
+                        }
+                        log.arr[m].employees[l].firstName[10] = '\0';
+                        log.arr[m].employees[l].lastName[10] = '\0';
+                    }
+
+                }
+                int i = 0;
+                while ((i < log.numberOfCompanies) && !readfile.eof()) {
+                    if (!getline(readfile, line, ';')) std::cout << "Failed";
+
+                    log.arr[i].id = str2int(line);
+                    std::cin.clear();
+                    if (!getline(readfile, line, ';')) std::cout << "Failed";
+
+                    copy2cstr(log.arr[i].title, (line.substr(0, 254)).c_str(), 255); //Convert String to Char* and save data
+
+                    if (!getline(readfile, line, ';')) std::cout << "Failed";
+
+                    copy2cstr(log.arr[i].summary, (line.substr(0, 2046)).c_str(), 2047);
+
+                    if (!getline(readfile, line, ';')) std::cout << "Failed";
+                    log.arr[i].numberOfEmployees = str2int(line);
+                    std::cin.clear();
+
+                    for (int j = 0; j < (log.arr[i].numberOfEmployees) - 1; ++j) //All except last one
+                    {
+                        if (!getline(readfile, line, ' ')) std::cout << "Failed";
+                        copy2cstr(((log.arr[i].employees) + j) -> firstName, (line.substr(0, 54)).c_str(), 55);
+
+                        if (!getline(readfile, line, ';')) std::cout << "Failed";
+                        copy2cstr(((log.arr[i].employees) + j) -> lastName, (line.substr(0, 54)).c_str(), 55);
+                    }
+
+                    if (!getline(readfile, line, ' ')) std::cout << "Failed";
+                    copy2cstr(((log.arr[i].employees) + (log.arr[i].numberOfEmployees - 1)) -> firstName, (line.substr(0, 54)).c_str(), 55);
+
+                    int C = 0;
+                    while ((readfile.peek() != ';') && (readfile.peek() != '\n')) {
+                        log.arr[i].employees[log.arr[i].numberOfEmployees - 1].lastName[C] = readfile.get();
+                        ++C;
+                    }
+                    if (readfile.peek() == ';' || readfile.peek() == '\n')
+                        readfile.ignore(std::numeric_limits < std::streamsize > ::max(), '\n');
+                    log.arr[i].employees[log.arr[i].numberOfEmployees - 1].lastName[C] = '\0';
+
+                    //AVL record Creation
+                    tree.Insert(log.arr[i].id, i, root);
+                    ++i;
+                }
+
+                std::cout << "Loaded Companies from file" << std::endl;
+                if (readfile.is_open())
+                    readfile.close();
+                mpause();
+                for (int o = 0; o < log.numberOfCompanies; ++o) {
+                    if (log.arr[o].id > max_id)
+                        max_id = log.arr[o].id;
+                }
+                std::cout << "Sorting...\n";
+                insort(log.arr, log.numberOfCompanies);
+                mpause();
+                break;
+            }
+        default:
+            {
+                break;
+            }
+        }
     }
     std::cout << "Exiting...." << std::endl;
     if (log.arr) //free arr from previous paths of executions
