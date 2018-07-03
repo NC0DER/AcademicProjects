@@ -99,6 +99,12 @@ void clear_screen() {
     #endif
 }
 
+void printComp(Company * arg) {
+    std::cout << "\nCompany Name: " << arg -> title << "\nId: " << arg -> id << "\nSummary: " << arg -> summary << "\nNumber of employeers: " << arg -> numberOfEmployees << std::endl;
+    for (int j = 0; j < arg -> numberOfEmployees; ++j)
+        std::cout << "Employee " << j + 1 << " " << ((arg -> employees) + j) -> firstName << " " << ((arg -> employees) + j) -> lastName << std::endl;
+}
+
 void swapComp(Company * arg1, Company * arg2) {
     if ((arg1 == NULL) || (arg2 == NULL)) {
         std::cout << "\nAt least one Company is not initialized\n";
