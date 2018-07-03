@@ -494,6 +494,24 @@ int main(int argc, char * argv[]) {
                 }
                 Case5_End: break;
             }
+        case 6:
+            {
+                std::string temp = " ";
+                if (log.arr == NULL) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                for (int l = 0; l < log.numberOfCompanies; ++l) {
+                    printComp(log.arr + l);
+                    std::cout << "\nPress 0 to exit or enter to continue: ";
+                    getline(std::cin, temp);
+                    if (temp == "0")
+                        goto Case6_End;
+                    clear_screen();
+                }
+                Case6_End: break;
+            }
         default:
             {
                 break;
