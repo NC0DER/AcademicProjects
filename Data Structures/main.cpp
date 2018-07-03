@@ -512,6 +512,31 @@ int main(int argc, char * argv[]) {
                 }
                 Case6_End: break;
             }
+        case 7:
+            {
+                std::string temp;
+                if (!log.arr) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                std::cout << "\nSearching Company by Surname -> ";
+                getline(std::cin, temp);
+                for (int l = 0; l < log.numberOfCompanies; ++l) { //Linear Search Start
+                    for (int k = 0; k < log.arr[l].numberOfEmployees; ++k) {
+                        if (strstr(log.arr[l].employees[k].lastName, temp.c_str())) {
+                            std::cout << "\nEmployee with last name \"" << temp << "\" found at " << l + 1 << "th access\n" << std::endl;
+                            std::cout << "Employed at the Company with the following info\n" << std::endl;
+                            printComp(log.arr + l);
+                            mpause();
+                            goto Case7_End;
+                        }
+                    }
+                } //Linear Search End
+                std::cout << "\nNo Employee with the given Surname was found";
+                mpause();
+                Case7_End: break;
+            }
         default:
             {
                 break;
