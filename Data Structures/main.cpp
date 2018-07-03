@@ -99,6 +99,13 @@ void clear_screen() {
     #endif
 }
 
+void printChar(char array[], int size) {
+    for (int i = 0; i < size; ++i)
+        if (array[i] >= 32 && array[i] <= 126) //a-z, A-Z, 0-9, space, symbols(,]~+
+            std::cout << array[i];
+    std::cout << std::endl;
+}
+
 void printComp(Company * arg) {
     std::cout << "\nCompany Name: " << arg -> title << "\nId: " << arg -> id << "\nSummary: " << arg -> summary << "\nNumber of employeers: " << arg -> numberOfEmployees << std::endl;
     for (int j = 0; j < arg -> numberOfEmployees; ++j)
