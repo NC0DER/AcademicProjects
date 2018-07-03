@@ -99,6 +99,72 @@ void clear_screen() {
     #endif
 }
 
+void swapComp(Company * arg1, Company * arg2) {
+    if ((arg1 == NULL) || (arg2 == NULL)) {
+        std::cout << "\nAt least one Company is not initialized\n";
+        return;
+    }
+    if (arg1 -> id == arg2 -> id) {
+        std::cout << "\nCan't switch same Company\n";
+        return;
+    }
+    Company temp; //Initialization & Allocation of intermediate
+    temp.id = 1;
+    temp.numberOfEmployees = 7;
+    for (int l = 0; l < 10; ++l) {
+        temp.summary[l] = '0' + l;
+        temp.title[l] = '0' + l;
+    }
+    temp.summary[10] = '\0';
+    temp.title[10] = '\0';
+    temp.employees = (Employee * ) malloc(7 * sizeof(Employee));
+    for (int l = 0; l < 7; ++l) {
+        for (int k = 0; k < 10; ++k) {
+            temp.employees[l].firstName[k] = '0' + k;
+            temp.employees[l].lastName[k] = '0' + k;
+        }
+        temp.employees[l].firstName[10] = '\0';
+        temp.employees[l].lastName[10] = '\0';
+    }
+
+    temp.id = arg1 -> id;
+    temp.numberOfEmployees = arg1 -> numberOfEmployees;
+    copy2cstr(temp.summary, arg1 -> summary, strlen(arg1 -> summary) + 1);
+    temp.summary[strlen(arg1 -> summary) + 1] = '\0';
+    copy2cstr(temp.title, arg1 -> title, strlen(arg1 -> title) + 1);
+    temp.title[strlen(arg1 -> title) + 1] = '\0';
+    for (int i = 0; i < arg1 -> numberOfEmployees; ++i) {
+        copy2cstr(temp.employees[i].firstName, arg1 -> employees[i].firstName, strlen(arg1 -> employees[i].firstName) + 1);
+        temp.employees[i].firstName[strlen(arg1 -> employees[i].firstName) + 1] = '\0';
+        copy2cstr(temp.employees[i].lastName, arg1 -> employees[i].lastName, strlen(arg1 -> employees[i].lastName) + 1);
+        temp.employees[i].lastName[strlen(arg1 -> employees[i].lastName) + 1] = '\0';
+    }
+    arg1 -> id = arg2 -> id;
+    arg1 -> numberOfEmployees = arg2 -> numberOfEmployees;
+    copy2cstr(arg1 -> summary, arg2 -> summary, strlen(arg2 -> summary) + 1);
+    arg1 -> summary[strlen(arg2 -> summary) + 1] = '\0';
+    copy2cstr(arg1 -> title, arg2 -> title, strlen(arg2 -> title) + 1);
+    arg1 -> title[strlen(arg2 -> title) + 1] = '\0';
+    for (int i = 0; i < arg2 -> numberOfEmployees; ++i) {
+        copy2cstr(arg1 -> employees[i].firstName, arg2 -> employees[i].firstName, strlen(arg2 -> employees[i].firstName) + 1);
+        arg1 -> employees[i].firstName[strlen(arg2 -> employees[i].firstName) + 1] = '\0';
+        copy2cstr(arg1 -> employees[i].lastName, arg2 -> employees[i].lastName, strlen(arg2 -> employees[i].lastName) + 1);
+        arg1 -> employees[i].lastName[strlen(arg2 -> employees[i].lastName) + 1] = '\0';
+    }
+    arg2 -> id = temp.id;
+    arg2 -> numberOfEmployees = temp.numberOfEmployees;
+    copy2cstr(arg2 -> summary, temp.summary, strlen(temp.summary) + 1);
+    arg2 -> summary[strlen(temp.summary) + 1] = '\0';
+    copy2cstr(arg2 -> title, temp.title, strlen(temp.title) + 1);
+    arg2 -> title[strlen(temp.title) + 1] = '\0';
+    for (int i = 0; i < temp.numberOfEmployees; ++i) {
+        copy2cstr(arg2 -> employees[i].firstName, temp.employees[i].firstName, strlen(temp.employees[i].firstName) + 1);
+        arg2 -> employees[i].firstName[strlen(temp.employees[i].firstName) + 1] = '\0';
+        copy2cstr(arg2 -> employees[i].lastName, temp.employees[i].lastName, strlen(temp.employees[i].lastName) + 1);
+        arg2 -> employees[i].lastName[strlen(temp.employees[i].lastName) + 1] = '\0';
+    }
+}
+
 void insort(Company * arg, int size) //Company record is nearly sorted-> Ideal Case O(n) for insertion sort
     {
         int k = 0;
