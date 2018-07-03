@@ -342,6 +342,80 @@ int main(int argc, char * argv[]) {
                 mpause();
                 break;
             }
+        case 4:
+            {
+                if (!log.arr) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                std::cout << "Deleting Company by id ->";
+                int del = 0;
+                del = inputInt();
+                for (int l = 0; l < log.numberOfCompanies; ++l) //Linear Search Start
+                {
+                    if (del == log.arr[l].id) {
+                        std::cout << "Company with id(" << log.arr[l].id << ") was found at " << l + 1 << "th access" << std::endl;
+                        if (log.arr[l].id != log.arr[log.numberOfCompanies - 1].id) //If current != Last
+                            swapComp(log.arr + l, log.arr + log.numberOfCompanies - 1); //Swap Current with Last one
+                        printComp(log.arr + log.numberOfCompanies - 1);
+
+                        std::cout << "Are you certain you want to delete this company from record?\n |(y)es / (n)o|";
+                        std::string choice = " ";
+                        getline(std::cin, choice);
+                        if (choice == "yes" || choice == "(y)" || choice == "y") {
+                            Companies temp;
+                            temp.arr = (Company * ) malloc((log.numberOfCompanies - 1) * sizeof(Company));
+                            if (temp.arr) {
+                                std::cout << "\nRealloc Succesful\n\n";
+                                for (int m = 0; m < log.numberOfCompanies - 1; ++m) {
+                                    temp.arr[m].id = log.arr[m].id;
+                                    temp.arr[m].numberOfEmployees = log.arr[m].numberOfEmployees;
+                                    int l = 0;
+                                    for (l = 0; l < strlen(log.arr[m].summary) + 1; ++l) {
+                                        temp.arr[m].summary[l] = log.arr[m].summary[l];
+                                    }
+                                    for (l = 0; l < strlen(log.arr[m].title) + 1; ++l) {
+                                        temp.arr[m].title[l] = log.arr[m].title[l];
+                                    }
+                                    temp.arr[m].summary[strlen(log.arr[m].summary)] = '\0';
+                                    temp.arr[m].title[strlen(log.arr[m].title)] = '\0';
+                                    temp.arr[m].employees = (Employee * ) malloc(7 * sizeof(Employee));
+                                    for (l = 0; l < log.arr[m].numberOfEmployees; ++l) {
+                                        int k = 0;
+                                        for (k = 0; k < strlen(log.arr[m].employees[l].firstName) + 1; ++k) {
+                                            temp.arr[m].employees[l].firstName[k] = log.arr[m].employees[l].firstName[k];
+                                        }
+                                        for (k = 0; k < strlen(log.arr[m].employees[l].lastName) + 1; ++k) {
+                                            temp.arr[m].employees[l].lastName[k] = log.arr[m].employees[l].lastName[k];
+                                        }
+                                        temp.arr[m].employees[l].firstName[strlen(log.arr[m].employees[l].firstName)] = '\0';
+                                        temp.arr[m].employees[l].lastName[strlen(log.arr[m].employees[l].lastName)] = '\0';
+                                    }
+                                }
+                                --log.numberOfCompanies;
+                                temp.numberOfCompanies = (log.numberOfCompanies);
+                                //AVL Remove & Update Pos
+
+                                root = tree.remove(root, log.arr[log.numberOfCompanies].id); //Delete current
+                                tree.change_pos(log.arr[l].id, log.numberOfCompanies - 1, root); //Alter linear pos of last
+                                std::cout << "Deletion successful. New length of record = " << log.numberOfCompanies << std::endl;
+                                free(log.arr -> employees);
+                                free(log.arr);
+                                log.arr = temp.arr;
+                                mpause();
+                                std::cout << "Sorting...\n";
+                                insort(log.arr, log.numberOfCompanies);
+                                mpause();
+                                goto Case4_End;
+                            } //Linear Search end
+                        } else goto Case4_End;
+                    }
+                }
+                std::cout << "\nNo Company with the given id was found";
+                mpause();
+                Case4_End: break;
+            }
         default:
             {
                 break;
