@@ -416,6 +416,84 @@ int main(int argc, char * argv[]) {
                 mpause();
                 Case4_End: break;
             }
+        case 5:
+            {
+                if (!log.arr) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                int subchoice = 0;
+                int del = 0;
+                int temp_pos = 0;
+                do {
+                    clear_screen();
+                    std::cout << "----------------\n";
+                    std::cout << "|Search Submenu|\n";
+                    std::cout << "----------------\n";
+                    std::cout << "\n\tChoose method: \n";
+                    std::cout << "\t\t1. Linear Search\n";
+                    std::cout << "\t\t2. AVL Access\n";
+                    std::cout << "\t\t3. Binary Search\n";
+                    std::cout << "\t\t4. Interpolation Search\n";
+                    std::cout << "\t\t5. Exit" << std::endl;
+                    subchoice = inputInt();
+                } while (subchoice > 5);
+                switch (subchoice) {
+                case 1:
+                    std::cout << "\nDisplaying Company by id ->";
+                    del = inputInt();
+                    for (int l = 0; l < log.numberOfCompanies; ++l) //Linear Search Start
+                    {
+                        if (del == log.arr[l].id) {
+                            std::cout << "\nCompany was found at " << l + 1 << "th access\n";
+                            printComp(log.arr + l);
+                            mpause();
+                            goto Case5_End;
+                        }
+                    }
+                    std::cout << "\nNo Company with the given id was found";
+                    mpause();
+                    break;
+                case 2:
+                    std::cout << "\nAccessing Company by id ->";
+                    del = inputInt();
+                    temp_pos = tree.Access(del, root);
+                    if (temp_pos >= 0) {
+                        std::cout << "Company with the following info was found:" << std::endl;
+                        printComp(log.arr + temp_pos);
+                    } else std::cout << "\nNo Company with the given id was found";
+                    mpause();
+                    break;
+                case 3:
+                    std::cout << "Binary Searching by id ->";
+                    del = inputInt();
+                    temp_pos = BinarySearch(log.arr, del, 0, log.numberOfCompanies);
+                    if (temp_pos == -1) {
+                        std::cout << "\nNo Company with the given id was found";
+                    } else {
+                        std::cout << "Company with the following info was found:" << std::endl;
+                        printComp(log.arr + temp_pos);
+                    }
+                    mpause();
+                    break;
+                case 4:
+                    std::cout << "Interpolate Searching by id ->";
+                    del = inputInt();
+                    temp_pos = InterpolationSearch(log.arr, del, 0, log.numberOfCompanies);
+                    if (temp_pos == -1) {
+                        std::cout << "\nNo Company with the given id was found";
+                    } else {
+                        std::cout << "Company with the following info was found:" << std::endl;
+                        printComp(log.arr + temp_pos);
+                    }
+                    mpause();
+                    break;
+                default:
+                    break;
+                }
+                Case5_End: break;
+            }
         default:
             {
                 break;
