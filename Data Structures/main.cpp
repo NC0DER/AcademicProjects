@@ -85,6 +85,25 @@ int main(int argc, char * argv[]) {
     return 0;
 }
 
+void insort(Company * arg, int size) //Company record is nearly sorted-> Ideal Case O(n) for insertion sort
+    {
+        int k = 0;
+        int count = 1;
+
+        for (int l = 1; l < size; ++l) {
+            k = l;
+            while (k > 0 && (arg[k].id < arg[k - 1].id)) {
+                swapComp(arg + k, arg + k - 1);
+                --k;
+                --count;
+            }
+            ++count;
+        }
+        if (count == size) {
+            std::cout << "\nRecord is already sorted.\n";
+        } else std::cout << "\nNearly sorted Record was sorted.\n";
+    }
+
 int BinarySearch(Company * Arr, int x, int min, int max) {
     if (Arr == NULL) {
         std::cout << "\nRecord is empty\n";
