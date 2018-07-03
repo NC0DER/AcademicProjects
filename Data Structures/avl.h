@@ -1,6 +1,5 @@
 #ifndef AVL_H
 #define AVL_H
-#include "AvL.h"
 #include <string>
 extern int max_id;
 struct AVLNode{

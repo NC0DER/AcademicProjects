@@ -1,5 +1,5 @@
 #include <iostream>
-#include "AvL.h"
+#include "avl.h"
 
 void AVLTree::change_pos(int x, int pos, AVLNode*& ptr)
 {
