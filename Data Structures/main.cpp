@@ -99,6 +99,64 @@ void clear_screen() {
     #endif
 }
 
+int inputInt() //Modified for ints(+)!!
+    {
+        std::string in = " ";
+        int returned = 0;
+        std::cout << "Input a positive integer: ";
+        while (true) {
+            getline(std::cin, in );
+            std::stringstream myStream( in );
+            //Checking whether the stream can be safely assigned to int(thus is an int)
+            if ((myStream >> returned) && (returned > 0))
+                break;
+            std::cin.clear(); //Clear Flags In case a control character has been caught
+            std::cout << "\n" << "Invalid number, please try again" << std::endl << std::endl;
+            std::cout << "Input a positive integer: ";
+        }
+        return returned;
+    }
+
+int str2int(std::string str) {
+    int temp = 0;
+    std::stringstream myStream(str);
+    if ((myStream >> temp) && (temp > 0))
+        return temp;
+    else return -1;
+}
+
+int copy2cstr(char * destination,
+    const char * source, int buf_size) {
+    int i = 0;
+    while ((i++ < buf_size) && ( * destination++ = * source++));
+    if (i < buf_size) { * destination = 0;
+        return i; //Current Position
+    }
+    return -1; //strlen(source)>buf_size
+}
+
+bool check_flags(std::ifstream * f) {
+    if (f -> eof()) {
+        std::cerr << "stream eofbit. error state";
+        std::cout << "\n\t---End of File has been reached---\n";
+        mpause();
+        return false;
+    }
+    if (f -> fail()) {
+        std::cerr << "stream failbit (or badbit). error state";
+        std::cout << "\n\t---Error while failing to read/write (internal stream error)---\n";
+        mpause();
+        return false;
+    }
+    if (f -> bad()) {
+        std::cerr << "stream badbit. error state";
+        std::cout << "\n\t---Error while reading/writing data---\n";
+        mpause();
+        return false;
+    }
+    return true;
+}
+
 void printChar(char array[], int size) {
     for (int i = 0; i < size; ++i)
         if (array[i] >= 32 && array[i] <= 126) //a-z, A-Z, 0-9, space, symbols(,]~+
