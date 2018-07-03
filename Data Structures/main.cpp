@@ -202,6 +202,65 @@ int main(int argc, char * argv[]) {
                 mpause();
                 break;
             }
+        case 2:
+            {
+                if (!log.arr) {
+                    std::cout << "\nThere is no record of companies loaded in memory.\nGoing Back in Menu...\n" << std::endl;
+                    mpause();
+                    break;
+                }
+                writefile.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
+                std::string line = " ";
+                std::stringstream temp;
+
+                temp << log.numberOfCompanies;
+                std::cin.clear();
+                line = temp.str();
+                temp.clear();
+                temp.str("");
+                writefile.write(line.c_str(), line.size());
+                line = " ";
+                writefile.put('\n');
+                for (int l = 0; l < log.numberOfCompanies; ++l) {
+                    temp << log.arr[l].id;
+                    std::cin.clear();
+                    line = temp.str();
+                    temp.clear();
+                    temp.str("");
+                    writefile.write(line.c_str(), line.size());
+                    line = " ";
+                    writefile.put(';');
+                    writefile.write(log.arr[l].title, strlen(log.arr[l].title));
+
+                    writefile.put(';');
+                    writefile.write(log.arr[l].summary, strlen(log.arr[l].summary));
+
+                    writefile.put(';');
+                    temp << log.arr[l].numberOfEmployees;
+                    std::cin.clear();
+                    line = temp.str();
+                    temp.clear();
+                    temp.str("");
+                    writefile.write(line.c_str(), line.size());
+                    line = " ";
+                    writefile.put(';');
+                    for (int k = 0; k < log.arr[l].numberOfEmployees - 1; ++k) {
+                        writefile.write(log.arr[l].employees[k].firstName, strlen(log.arr[l].employees[k].firstName));
+                        writefile.put(' ');
+                        writefile.write(log.arr[l].employees[k].lastName, strlen(log.arr[l].employees[k].lastName));
+                        writefile.put(';');
+                    }
+                    writefile.write(log.arr[l].employees[log.arr[l].numberOfEmployees - 1].firstName, strlen(log.arr[l].employees[log.arr[l].numberOfEmployees - 1].firstName));
+                    writefile.put(' ');
+                    writefile.write(log.arr[l].employees[log.arr[l].numberOfEmployees - 1].lastName, strlen(log.arr[l].employees[log.arr[l].numberOfEmployees - 1].lastName));
+                    writefile.put('\n');
+                }
+                if (writefile.is_open())
+                    writefile.close();
+                std::cout << "\nSaved Record of all Companies to file" << std::endl;
+                mpause();
+                break;
+            }
         default:
             {
                 break;
