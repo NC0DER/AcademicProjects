@@ -90,6 +90,15 @@ void mpause() {
     std::cin.ignore(std::numeric_limits < std::streamsize > ::max(), '\n');
 }
 
+void clear_screen() {
+    #ifdef _WIN32
+        std::system("cls");
+    #endif
+    #ifdef __gnu_linux__
+        std::system("clear");
+    #endif
+}
+
 void insort(Company * arg, int size) //Company record is nearly sorted-> Ideal Case O(n) for insertion sort
     {
         int k = 0;
