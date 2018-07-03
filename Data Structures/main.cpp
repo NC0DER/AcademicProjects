@@ -85,6 +85,25 @@ int main(int argc, char * argv[]) {
     return 0;
 }
 
+int BinarySearch(Company * Arr, int x, int min, int max) {
+    if (Arr == NULL) {
+        std::cout << "\nRecord is empty\n";
+        return -1;
+    }
+    int mid = 0;
+    while (max >= min) {
+        mid = min + ((max - min) / 2); //overflow protection from (max+min)/2
+
+        if (Arr[mid].id > x) //Lower half of the array [min...mid]
+        {
+            max = mid - 1;
+        } else if (Arr[mid].id < x) {
+            min = mid + 1; //Upper half of the array [mid...max]
+        } else if (Arr[mid].id == x)
+            return mid;
+    }
+    return -1; //Key not found
+}
 
 int InterpolationSearch(Company * Arr, int x, int low, int high) {
     if ((high - low + 1) < 0 || !Arr) // size = high - low + 1
