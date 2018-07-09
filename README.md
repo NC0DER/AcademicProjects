@@ -22,5 +22,5 @@ Written in C++, intended for both `Linux` & `Windows`, features a text-adventure
 ## Simple Linux Shell
 Written in C, intended only for `Linux`, features a simplified shell that runs processes.
 
-~WORK IN PROGRESS~
-**All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**
+> ~WORK IN PROGRESS~  
+> **All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**
