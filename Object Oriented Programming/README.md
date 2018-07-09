@@ -26,7 +26,7 @@ Every destroyed ship is removed from the game.
 The game runs automatically as a simulation, and the user can intervene every second round.  
 The game is finished once all ships are destroyed or any ship reaches the predefined gold target.  
 
-# In-Game Features
+## In-Game Features
 Every 2nd round the player can pause the game and:
 * Get information for a specific map area, by inputting its coordinates.
 * Modify the weather or gold for a specific map area.
@@ -36,7 +36,7 @@ Every 2nd round the player can pause the game and:
 * Delete an existing ship.
 * Display some general info about the game and the map.
 
-# In-Game example 
+## In-Game example 
 ```
 		[ Turn 2 ]
 
@@ -62,7 +62,7 @@ Recon Ship4 (Recon type) has been destroyed!!
 Press M to enter user menu or Enter <-' to continue: 
 ```
 
-# Compilation && Execution
+## Compilation && Execution
 For Linux, you can type in terminal while inside the project directory:
 ```bash
 $ g++ -std=c++11 *.cpp -o game
