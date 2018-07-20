@@ -1,0 +1,306 @@
+html{
+    position: relative;
+    min-height: 100%;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    margin-bottom: 50px; /* Required marging for footer-fixed-bot.*/
+}
+
+.par{
+    content: "\f066";
+    text-align: center;
+    font-family: monospace,sans-serif;
+    color: red;
+    padding-bottom: 10px;
+}
+[hidden] {
+    display: none !important;
+}
+#search-form,#search-form2{
+    float:right;
+    width:150px;
+    text-align:center;
+    text-indent:0;
+    padding-bottom:0;
+}
+#search-link{
+    text-align: center;
+}
+#suggestion{
+    width:151px;
+    text-align: center;
+    z-index: +2 !important;
+    padding-top:0 !important;
+    border-collapse: collapse;
+    border-top: 0 solid gray;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+    border-left: 1px solid gray;
+    background-color: white;
+}
+
+.jumbotron {
+    background-color: #428bca;
+    color: #FFFFFF;
+    text-align:center;
+    font-family: verdanna,sans-serif;
+    margin-top:-25px;
+    padding: 25px 0;
+}
+
+textarea {
+    resize:none !important;
+    margin-left: 5px;
+}
+
+.form-text{
+    border-radius: 7px !important;
+    border: 2px solid #ddd !important;
+}
+.panel-default{
+    margin: auto;
+    width: 300px;
+    margin-top:10px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 25px 0 rgba(0,0,0,0.5);
+    border-radius: 25px;
+    padding-top:20px;
+    padding-bottom:30px;
+}
+
+.panel-default:hover{
+    box-shadow: 0 0 25px 3px rgba(0,0,0,0.5);
+}
+
+.panel-body{
+    font-size: 150%;
+    margin-bottom: 10px;
+    
+}
+
+.input-group{
+    text-align:center;
+    border-collapse: collapse;
+}
+
+.input-group:nth-child(2){
+    margin-bottom: 30px;
+}
+
+.input-group-addon{
+    text-align: center;
+    background-color: white;
+    border: none;
+}
+
+.form-control{
+    text-align: center;
+    text-indent: -18px;
+    border: 0;
+}
+#file_name{
+    text-align:left;
+}
+#qr-container{
+    position:relative; /* This helps anything 'absolute' inside to not go over the container */
+    height: 110px;
+    /*  Arbitrary height - slightly larger than the img below
+        Without this the img draws over the container
+    */
+}
+.img-responsive {
+    width: 99px; /*232px qr-code image size*/
+    height: 99px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin-top:-49px; /* half of the img-height */
+    margin-left:-49px; /* half of the img-width */
+}
+#user{
+    color:#FFFFFF !important;
+}
+#add1, #add2, #add3, #edit1, #edit2, #edit3,#track,#open,#search,#search2{
+    padding: 6px 12px;
+    background-color: #428bca !important;
+    border: 0 #428bca !important;
+    border-radius: 4px !important;
+}
+
+#video{
+    margin-left:10px;
+    padding: 6px 12px;
+    font-size: 20px;
+    background-color: #FFFFFF !important;
+    color: #000000;
+    border: 1px dashed gray;
+    border-radius: 4px !important;
+}
+/*On click make the button red*/
+#video:active{
+    color: #DC143C;
+    border: 1px dashed #DC143C;
+}
+#open,#file_name,#qr-preview{
+    margin-left: 50px;
+}
+#v{
+    width:320px;
+    height:240px;
+}
+#qr-canvas{
+    display:none;
+}
+#qr-preview{
+    height:246px;
+    width:326px;;
+    border: 3px dashed black;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+#outdiv
+{
+    width:326px;
+    height:246px;
+    border: dashed black;
+    border-width: 3px 3px 3px 3px;
+}
+#result{
+    border: solid;
+    border-collapse: collapse;
+    border-width: 0px 2px 2px 2px;
+    padding:20px;
+    width:326px;
+    text-align: center;
+}
+
+#deliver{
+    padding: 6px 12px;
+    background-color: #5cb85c !important;
+    border: 0 #5cb85c !important;
+    border-radius: 4px !important;
+}
+#upload{
+    font-size: 20px;
+    font-family: Consolas,Monospace,Helvetica;
+    padding: 6px 12px;
+    background-color: #5cb85c !important;
+    border: 0 #5cb85c !important;
+    border-radius: 4px !important;
+}
+#change,#select1,#select2{
+    margin-left: 20px;
+}
+#delete1, #delete2, #delete3{
+    padding: 6px 12px;
+    border: 0 #d9534f !important;
+    border-radius: 4px !important;
+}
+#login{
+    width: 50% !important;
+    margin: auto !important;
+}
+#space{
+    padding-top: 50px;
+}
+
+.modal-content{
+    margin-right:-1px !important;
+}
+.modal-header{
+    background-color: #428bca !important;
+    color: white !important;
+    border-radius: 5px 5px 0px 0px !important;
+}
+
+.modal-button{
+    background-color: #428bca !important;
+    border-radius: 10px !important;
+}
+
+.close {
+    color: #fff;
+    opacity: 1;
+}
+.close:hover{
+    color: #f1f1f1;
+    opacity: 1;
+}
+.btn-primary-spacing
+{
+    margin-right: 7px;
+    margin-bottom: 5px !important;
+}
+#store{
+    margin-top: 100px !important;
+}
+.btn-default{
+    text-align: center;
+    font-size:100%;
+    font-family: Monospace,Consolas,sans-serif;
+    font-weight: bold;
+    color:white;
+    background-color: #428bca;
+    border-radius: 10px;
+}
+
+.btn-default:hover{
+    color:white;
+    background-color: #3277b3;
+    
+}
+
+.btn-default:active, 
+.btn-default:focus, 
+.btn-default:target, 
+.btn-default:active:focus {
+    color:white;
+    background-color: #3277b3;
+}
+
+.container-fluid{
+    text-align: right;    
+    background-color: #428bca;
+    color: white;
+    font-family: Verdanna,sans-serif;
+}
+
+.table th {
+    text-align: center !important;
+    vertical-align: middle !important;
+    background-color: #428bca !important;
+    color: white !important;
+}
+.table td {
+    vertical-align: middle !important;
+    padding: 2px !important;
+}
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #e6e6e6 !important;
+}
+
+#block{
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+}
+#block2{
+    padding-top: -150px !important;
+}
+#footer {
+    padding-top: 100px !important;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 50px;
+    background-color: #f5f5f5;
+}
