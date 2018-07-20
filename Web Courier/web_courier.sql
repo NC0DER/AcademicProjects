@@ -145,7 +145,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uname`, `passw`, `role`, `store`) VALUES
-('admin', '$2y$10$kFHVIuzvJVErRduyTBNJxuVbz1Ld1fe8et9eblLe00BZbxA.sSJ8m', 'admin', 'NONE'),
+('admin', '$2y$10$NE4QyYKp3KrXH8QTMycLP.x/dVtnQtInWAWvavIuJPVOh.K94jyba', 'admin', 'NONE'),
 ('Αθηνά', '$2y$10$NE4QyYKp3KrXH8QTMycLP.x/dVtnQtInWAWvavIuJPVOh.K94jyba', 'transit_employee', 'Kalamata'),
 ('Αλέξανδρος', '$2y$10$NE4QyYKp3KrXH8QTMycLP.x/dVtnQtInWAWvavIuJPVOh.K94jyba', 'transit_employee', 'Aspropyrgos'),
 ('Άννα', '$2y$10$NE4QyYKp3KrXH8QTMycLP.x/dVtnQtInWAWvavIuJPVOh.K94jyba', 'transit_employee', 'Alexandroupoli'),
