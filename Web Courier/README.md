@@ -6,7 +6,7 @@ with `ut8-greek-locale` support for an online courier using
 back-end languages and libraries (e.g `php`, `MySQL`, `phpqrcode`)  
 and front-end languages and frameworks (e.g `Javascript`, `JQuery`, `HTML5`, `Bootstrap`).
 
-# Prerequisite Libraries / Frameworks
+## Prerequisite Libraries / Frameworks
 
 * Bootstrap (https://getbootstrap.com/)
 * Jquery (https://jquery.com/)
@@ -16,7 +16,7 @@ and front-end languages and frameworks (e.g `Javascript`, `JQuery`, `HTML5`, `Bo
 
 *All prerequisites are free and contained locally in the project, there is no need to download any of them.*
 
-# Features
+## Features
 
 - [x] Admin menu which can create, read, update, and delete stores & users.
 - [x] Local Store menu which can create, read, track, and delete orders.
@@ -29,10 +29,10 @@ and front-end languages and frameworks (e.g `Javascript`, `JQuery`, `HTML5`, `Bo
 - [x] Hashed & Salted passwords inside the database.
 - [x] Full UTF-8 Support.
 
-# Project Architecture
+## Project Architecture
 ![Project Architecture](https://github.com/NC0DER/AcademicProjects/blob/master/Web%20Courier/screenshots/model.jpg)
 
-# Project Setup
+## Project Setup
 
 The simplest, fastest way to setup the project is to install WAMP (http://www.wampserver.com/en/)  
 and copy the project directory inside `../www` directory of your wamp install.  
@@ -41,7 +41,7 @@ and then import the `SQL` Schema contained in the file `/Web Courier/web_courier
 For Demonstration purposes the project can be hosted locally (`localhost`).  
 In this case, an internet connection is required only for the rendering of the google maps api.
 
-# Project Screenshots
+## Project Screenshots
 
 You can find some screenshots below.  
 If you wish to access all screenshot images you can click [this link](https://github.com/NC0DER/AcademicProjects/tree/master/Web%20Courier/screenshots)
