@@ -29,5 +29,5 @@ Supports utf-8 fully and is designed for greek locale.
 
 ## Note
 > ~WORK IN PROGRESS~  
-> **All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**
+> **All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**  
 > **These projects are made for educational (not commercial) purposes**
