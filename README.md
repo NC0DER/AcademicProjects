@@ -27,5 +27,7 @@ Full stack web app, written in HTML5, CSS, PHP, Javascript, JQuery, MySQL.
 Features an online courier system for orders by using QR Codes for processing them.  
 Supports utf-8 fully and is designed for greek locale.  
 
+## Note
 > ~WORK IN PROGRESS~  
 > **All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**
+> **These projects are made for educational (not commercial) purposes**
