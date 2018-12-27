@@ -27,6 +27,22 @@ int main(int argc, char *argv[]) {
     std::istringstream block_stream(argv[2]);
     block_stream >> block_num;
     
+    // Bounds Checking for the blocksize.
+    if (block_num < 0) {
+        std::cerr << " *Error: blocksize for each dimension should be a positive number" << std::endl;
+        return EXIT_FAILURE;
+    }
+    else if (block_num < 16) {
+        std::cerr << " *Error: the number of threads for each dimension exceeds 65535 \n (e.g 1.000.000 / 15 > 65335) \n"
+                  << " *Note:  use a blocksize for each dimension >= 16" << std::endl;
+        return EXIT_FAILURE;
+    }
+    else if (block_num > 32) {
+        std::cerr << " *Error: the number of blocks for both dimensions exceeds 1024 \n (e.g 33x33 = 1089) \n"
+                  <<  " *Note:  use a blocksize for each dimension <= 32" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     std::ifstream file(argv[1]);
     // Checking if file stream has succesfully opened.
     if (!file.is_open()) {
