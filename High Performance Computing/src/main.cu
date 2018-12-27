@@ -85,6 +85,19 @@ int main(int argc, char *argv[]) {
     x.data = (double *)malloc(x.size * sizeof(double));
     x_prev.data = (double *)malloc(x_prev.size * sizeof(double));
 
+    // Load M on the Host system memory.
+    for (int row = 0; row < M.rows; ++row) {
+        for (int col = 0; col < M.cols; ++col) {
+            M.data[idx(row, M.cols, col)] = text[idx(row, M.cols, col)];
+        }
+    }
+    text.clear(); // Empty the vector.
+
+    // Initialize w values to 0
+    for (int index = 0; index < n; ++index) {
+        w.data[index] = 0.0;
+    }
+
     cudaMalloc(&dev_M.data, dev_M.size * sizeof(double));
     cudaMalloc(&dev_w.data, dev_w.size * sizeof(double));
     cudaMalloc(&dev_x.data, dev_x.size * sizeof(double));
