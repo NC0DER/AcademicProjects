@@ -27,5 +27,31 @@ int main(int argc, char *argv[]) {
     std::istringstream block_stream(argv[2]);
     block_stream >> block_num;
     
+    std::ifstream file(argv[1]);
+    // Checking if file stream has succesfully opened.
+    if (!file.is_open()) {
+        std::cerr << "File doesn't exist, or failed to open!" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Load the float values on a dynamically expanding vector.
+    std::vector<double> text;
+    std::string line;
+    double value = 0;
+    int n = 0, m = 0;
+    while (getline(file, line)) {
+        std::stringstream stream(line);
+        std::string col;
+        m = 0;
+        while (getline(stream, col, ',')) {
+            std::istringstream num_stream(col);
+            num_stream >> value;
+            text.push_back(value);
+            m++;
+        }
+        n++;
+    }
+    file.close();
+
     return EXIT_SUCCESS;
 }
