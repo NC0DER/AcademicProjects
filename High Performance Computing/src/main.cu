@@ -128,6 +128,23 @@ int main(int argc, char *argv[]) {
     initialize_vector(dev_x, 0, block_num);
     initialize_vector(dev_x_prev, 1, block_num);
 
+    cudaStatus = cudaMemcpy(dev_M.data, M.data, dev_M.size * sizeof(double), cudaMemcpyHostToDevice);
+    if (cudaStatus != cudaSuccess) {
+        std::cerr << "cudaMemcpy failed! 1";
+
+        // Free all memory both in Device and CPU.
+        cudaFree(dev_M.data);
+        cudaFree(dev_w.data);
+        cudaFree(dev_x.data);
+        cudaFree(dev_x_prev.data);
+
+        free(M.data);
+        free(w.data);
+        free(x.data);
+        free(x_prev.data);
+
+        return EXIT_FAILURE;
+    }
     cudaFree(dev_M.data);
     cudaFree(dev_w.data);
     cudaFree(dev_x.data);
