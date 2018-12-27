@@ -98,6 +98,27 @@ int main(int argc, char *argv[]) {
         w.data[index] = 0.0;
     }
 
+    cudaError_t cudaStatus; // Return value of each cuda call.
+
+    // Choose which GPU Device to execute on.
+    cudaStatus = cudaSetDevice(0);
+    if (cudaStatus != cudaSuccess) {
+        std::cerr << "cudaSetDevice failed!";
+
+        // Free all memory both in Device and CPU.
+        cudaFree(dev_M.data);
+        cudaFree(dev_w.data);
+        cudaFree(dev_x.data);
+        cudaFree(dev_x_prev.data);
+
+        free(M.data);
+        free(w.data);
+        free(x.data);
+        free(x_prev.data);
+
+        return EXIT_FAILURE;
+    }
+
     cudaMalloc(&dev_M.data, dev_M.size * sizeof(double));
     cudaMalloc(&dev_w.data, dev_w.size * sizeof(double));
     cudaMalloc(&dev_x.data, dev_x.size * sizeof(double));
