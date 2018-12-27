@@ -125,6 +125,9 @@ int main(int argc, char *argv[]) {
     cudaMalloc(&dev_x_prev.data, dev_x_prev.size * sizeof(double));
     cudaMalloc(&dev_s.data, dev_s.size * sizeof(double));
 
+    initialize_vector(dev_x, 0, block_num);
+    initialize_vector(dev_x_prev, 1, block_num);
+
     cudaFree(dev_M.data);
     cudaFree(dev_w.data);
     cudaFree(dev_x.data);
