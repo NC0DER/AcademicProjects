@@ -69,5 +69,37 @@ int main(int argc, char *argv[]) {
     }
     file.close();
 
+    matrix M(n, m);
+    matrix w(n, 1);
+    matrix x(m, 1);
+    matrix x_prev(m, 1);
+
+    matrix dev_M(n, m);
+    matrix dev_w(n, 1);
+    matrix dev_x(m, 1);
+    matrix dev_x_prev(m, 1);
+    matrix dev_s(n, 1);
+
+    M.data = (double *)malloc(M.size * sizeof(double));
+    w.data = (double *)malloc(w.size * sizeof(double));
+    x.data = (double *)malloc(x.size * sizeof(double));
+    x_prev.data = (double *)malloc(x_prev.size * sizeof(double));
+
+    cudaMalloc(&dev_M.data, dev_M.size * sizeof(double));
+    cudaMalloc(&dev_w.data, dev_w.size * sizeof(double));
+    cudaMalloc(&dev_x.data, dev_x.size * sizeof(double));
+    cudaMalloc(&dev_x_prev.data, dev_x_prev.size * sizeof(double));
+    cudaMalloc(&dev_s.data, dev_s.size * sizeof(double));
+
+    cudaFree(dev_M.data);
+    cudaFree(dev_w.data);
+    cudaFree(dev_x.data);
+    cudaFree(dev_x_prev.data);
+    cudaFree(dev_s.data);
+
+    free(M.data);
+    free(w.data);
+    free(x.data);
+    free(x_prev.data);
     return EXIT_SUCCESS;
 }
