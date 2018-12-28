@@ -65,7 +65,7 @@ Press M to enter user menu or Enter <-' to continue:
 ## Compilation && Execution
 For Linux, you can type in terminal while inside the project directory:
 ```bash
-$ g++ -std=c++11 *.cpp -o game
+$ g++ -std=c++11 src/*.cpp -o game
 $ ./game
 ```
 For Windows, you can import the source files in any IDE, such as Visual Studio, and click `build and run`.
