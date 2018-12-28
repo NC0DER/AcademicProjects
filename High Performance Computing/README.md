@@ -1,8 +1,8 @@
 # High Performance Computing
 
 This project was made for the homonym core elective course in university.  
-The teaching goal of this project was to build the basic step of the PPDP  
-algorithm in a parallel execution implementation using the [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit).
+The teaching goal of this project was to build the basic step of the [PPDP  
+algorithm](https://www-users.cs.umn.edu/~boley/publications/papers/PDDP.pdf) in a parallel execution implementation using the [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit).
 
 
 ## 0. Introduction
@@ -97,3 +97,28 @@ For this optimal block size the speedup for all 3 datasets is:
 ____  
 **GeForce GTX 650 Ti**   
 ![GTX](https://github.com/NC0DER/AcademicProjects/blob/master/High%20Performance%20Computing/images/gtx_speedup.jpg)  
+
+## 4. Build && Run
+`Windows`: I build using `VS2015 & CUDA 9.0`, you can use `VS2017 & CUDA 10.0`  
+`Linux`: I build using the makefile in the following manner:  
+
+### Build 
+```bash
+$ make fast  #Optimized implementation
+nvcc main.cu pddp.cu wrappers.cu -o kernel_fast -arch=compute_20 -code=sm_20 -O3 --machine 64 -DSHARED
+$ make slow  #Naive Implementation
+nvcc main.cu pddp.cu wrappers.cu -o kernel_fast -arch=compute_20 -code=sm_20 -O3 --machine 64
+```
+**Warning: no make all rule provided**
+### Run 
+```bash
+$ ./kernel_fast  #Same for kernel_slow
+Syntax: ./<executable> <filename> <blocksize per dimension>
+ *Note: Some kernels use the same blocksize for dimension X and Y
+ *Note: The resulting blocksize is (e.g for input n) n x n x 1 for each dim (x, y, z)
+
+**Note: Blocksize for each dimension X & Y much larger than 32
+**Note: is not supported for cards with comp.capability < 6.0
+
+$ ./kernel_fast dataset1.csv 16  #Same for kernel_slow
+```
