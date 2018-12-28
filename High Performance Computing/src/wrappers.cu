@@ -39,3 +39,44 @@ void initialize_w(matrix M, matrix w, unsigned int blockSizeX)
         std::cerr << "cudaDeviceSynchronize returned error code " << cudaStatus << " after launching initialize_w Kernel!" << std::endl;
     }
 }
+
+float matrix_multiplication(matrix w, matrix M, matrix x_prev, matrix s, unsigned int blockSize)
+{
+    cudaError_t cudaStatus;
+    // Events for measuring the execution time
+    cudaEvent_t start;
+    cudaEvent_t stop;
+    float msec;
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    // Define grid dimensions
+    dim3 dimBlock;
+    dim3 dimGrid;
+    dimBlock.x = blockSize;
+    dimBlock.y = blockSize;
+    dimBlock.z = 1;
+    dimGrid.x = (s.cols - 1) / dimBlock.x + 1;
+    dimGrid.y = (s.rows - 1) / dimBlock.y + 1;
+    dimGrid.z = 1;
+
+    initialize_vector(s, 0, 16);
+    cudaEventRecord(start); // Start Event.
+    matrix_multiplication_kernel << <dimGrid, dimBlock, 2 * blockSize * blockSize * sizeof(double) >> >(w, M, x_prev, s);
+    cudaEventRecord(stop); // Stop Event.
+
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&msec, start, stop);
+
+    // cudaDeviceSynchronize waits for the kernel to finish.
+    // While returing any errors that happended during the kernel launch.
+    cudaStatus = cudaDeviceSynchronize();
+    if (cudaStatus != cudaSuccess) {
+        std::cerr << "cudaDeviceSynchronize returned error code " << cudaStatus << " after launching MatrixVectorMult Kernel!" << std::endl;
+    }
+    return msec;
+}
+    return msec;
+}
+}
