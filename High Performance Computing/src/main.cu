@@ -8,6 +8,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "../include/matrix.h"
+#include "../include/timer.h"
 #include "../include/wrappers.cuh"
 
 #define debug 1
