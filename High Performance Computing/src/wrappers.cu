@@ -97,16 +97,31 @@ float transposed_matrix_multiplication(matrix w, matrix M, matrix s, matrix x, u
     dim3 dimBlock;
     dim3 dimGrid;
     
+#ifdef SHARED
+    dimBlock.x = blockSize;
+    dimBlock.y = 1;
+    dimBlock.z = 1;
+#else
     dimBlock.x = blockSize;
     dimBlock.y = blockSize;
     dimBlock.z = 1;
+#endif
+#ifdef SHARED
+    dimGrid.x = (x.rows - 1) / dimBlock.x + 1;
+    dimGrid.y = 1;
     dimGrid.z = 1;
+#else
     dimGrid.x = (x.cols - 1) / dimBlock.x + 1;
     dimGrid.y = (x.rows - 1) / dimBlock.y + 1;
     dimGrid.z = 1;
+#endif
 
     cudaEventRecord(start); // Start Event.
+#ifdef SHARED // tileSize = blockSize 
+    transposed_matrix_multiplication_kernel << <dimGrid, dimBlock, blockSize * sizeof(double) >> > (w, M, s, x, blockSize);
+#else
     transposed_matrix_multiplication_kernel << <dimGrid, dimBlock >> >(w, M, s, x);
+#endif 
     cudaEventRecord(stop); // Stop Event.
 
     cudaEventSynchronize(stop);

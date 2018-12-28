@@ -43,6 +43,36 @@ __global__ void matrix_multiplication_kernel(matrix w, matrix a, matrix b, matri
     }
 }
 
+__global__ void transposed_matrix_multiplication_kernel(matrix w, matrix a, matrix b, matrix c, unsigned int tile_size)
+{
+    int bx = blockIdx.x; 
+    int tx = threadIdx.x;
+    int index = bx * blockDim.x + tx;
+
+    extern __shared__ double shared[];
+    
+    double sum = 0;
+
+    for (int k = 0; k < (tile_size + a.rows - 1) / tile_size; k++) {
+        if (k * tile_size + tx < b.rows) {
+            shared[tx] = b.data[k * tile_size + tx];
+        }
+        else {
+            shared[tx] = 0.0;
+        }
+        __syncthreads();
+#pragma unroll
+        for (int n = 0; n < tile_size; ++n) {
+            if (index + (n + tile_size * k) * a.cols < a.size) {
+                sum += (a.data[index + (n + tile_size * k) * a.cols] - w.data[n + tile_size * k]) * shared[n];
+            }
+        }
+        __syncthreads();
+    }
+    if (index < c.rows) {
+        c.data[index] = sum;
+    }
+}
 #else
 __global__ void matrix_multiplication_kernel(matrix w, matrix a, matrix b, matrix c)
 {
