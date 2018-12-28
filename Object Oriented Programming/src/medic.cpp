@@ -1,4 +1,4 @@
-#include "medic.h"
+#include "../include/medic.h"
 
 void Medic::mov(Sea** Map)
 {

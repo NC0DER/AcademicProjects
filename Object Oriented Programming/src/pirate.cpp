@@ -1,4 +1,4 @@
-#include "pirate.h"
+#include "../include/pirate.h"
 
 void Pirate::func(Sea** Map)
 {
@@ -82,29 +82,29 @@ void Pirate::mov(Sea** Map)
 		{
 		case 0:
 			 tempX = x_ref - 1;
-             break;
+			 break;
 		case 1:
 			 tempX = x_ref + 1;
-             break;
+			 break;
 		case 2:
 			 tempX = x_ref;
-             break; //same value
+			 break; //same value
 		default: std::cout<<"Error::Pirate mov() execution was not supposed to be here";
-             break;
+			 break;
 		}
 		switch(choiceY)
 		{
 		case 0:
 			 tempY = y_ref - 1;
-             break;
+			 break;
 		case 1:
 			 tempY = y_ref + 1;
-             break;
+			 break;
 		case 2:
 			 tempY = y_ref;
 			 break; //same value
 		default: std::cout<<"Error::Pirate mov() execution was not supposed to be here";
-             break;
+			 break;
 		}
 		tempX = mod(tempX, _SIZE_);
 		tempY = mod(tempY, _SIZE_);

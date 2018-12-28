@@ -1,4 +1,4 @@
-#include "trade.h"
+#include "../include/trade.h"
 
 void Trade::func(Sea** Map)
 {

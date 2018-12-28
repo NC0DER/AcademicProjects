@@ -1,4 +1,4 @@
-#include "recon.h"
+#include "../include/recon.h"
 
 void Recon::mov(Sea** Map)
 {

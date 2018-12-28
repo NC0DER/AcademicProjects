@@ -5,13 +5,12 @@
 #include <ctime>
 #include <random>
 #include <functional>
-#include <array>
-#include <new>
 
-#include "pirate.h"
-#include "medic.h"
-#include "recon.h"
-#include "trade.h"
+#include "../include/pirate.h"
+#include "../include/medic.h"
+#include "../include/recon.h"
+#include "../include/trade.h"
+
 #define ZzZ 800 //Sleep Time in msec for all msleep() calls
 #define Reach_Gold 500 //Amount of gold to end simulation
 
