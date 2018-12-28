@@ -116,4 +116,11 @@ float transposed_matrix_multiplication(matrix w, matrix M, matrix s, matrix x, u
     }
     return msec;
 }
+
+float Multiply(matrix M, matrix w, matrix x, matrix x_prev, matrix s, unsigned int blockSize)
+{
+    float msec[1];
+    msec[0] = matrix_multiplication(w, M, x_prev, s, blockSize); // s = (M - w * eT) * x_prev
+    msec[1] = transposed_matrix_multiplication(w, M, s, x, blockSize); // (M - w * eT)T * s
+    return msec[0] + msec[1]; // Return the total elapsed time of 2 multiplication kernels.
 }
