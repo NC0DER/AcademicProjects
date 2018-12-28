@@ -143,6 +143,8 @@ int main(int argc, char *argv[]) {
         free(x.data);
         free(x_prev.data);
 
+        return EXIT_FAILURE;
+    }
     initialize_w(dev_M, dev_w, block_num);
     cudaStatus = cudaMemcpy(w.data, dev_w.data, dev_w.size * sizeof(double), cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) {
@@ -162,8 +164,6 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-        return EXIT_FAILURE;
-    }
     cudaFree(dev_M.data);
     cudaFree(dev_w.data);
     cudaFree(dev_x.data);
