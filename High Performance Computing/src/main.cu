@@ -181,6 +181,9 @@ int main(int argc, char *argv[]) {
         ++count; // Count the amount of iterations.
         msec = Multiply(dev_M, dev_w, dev_x, dev_x_prev, dev_s, block_num); // Multiply and return the elapsed time.
 
+#if debug
+        std::cout << "Multiply time elapsed: " << msec << " msec\n";
+#endif      
         avg_Msec += msec;
         // Transfer Xk, Xk-1 back to cpu in order to calculate the norm.
         cudaMemcpy(x.data, dev_x.data, dev_x.size * sizeof(double), cudaMemcpyDeviceToHost);
@@ -219,6 +222,11 @@ int main(int argc, char *argv[]) {
 #endif
                 avg_sec += sec;
                 total_msec += (sec * 1000) + msec;
+#if debug
+                std::cout << "delta_norm " << delta_norm << "\n"
+                          << "Elapsed seconds for Norm: " << sec << " sec \n"
+                          << std::endl;
+#endif
                 // Transfer the current Xk (Host) to the new Xk-1 (Device)!!
                 cudaMemcpy(dev_x_prev.data, x.data, dev_x.size * sizeof(double), cudaMemcpyHostToDevice);
 
@@ -244,6 +252,28 @@ int main(int argc, char *argv[]) {
             }
     } while (delta_norm > epsilon);
 
+    // Print the final average times.
+    avg_sec /= count;
+    avg_Msec /= count;
+#if debug
+    std::cout << std::endl
+              << "Average Multiplication time: " << avg_Msec << " msec \n"
+              << "Average Norm Calculation time: " << avg_sec * 1000 << " msec \n"
+              << "Average Iteration time: " << avg_Msec + (avg_sec * 1000) << " msec \n\n"
+              << "Total Number of iterations: " << count << "\n"
+              << "Total Time of all iterations: " << total_msec / 1000 << " sec" << std::endl;
+#endif
+    // Open output stream for file write only.
+    std::ofstream result("results.csv");
+
+    for (int row = 0; row < x.rows - 1; row++) {
+        result << x.data[row] << ",";
+    }
+    // Unroll the last iteration of the loop above.
+    result << x.data[x.rows - 1] << std::endl;
+    // Close the file.
+    result.close();
+    
     cudaFree(dev_M.data);
     cudaFree(dev_w.data);
     cudaFree(dev_x.data);
