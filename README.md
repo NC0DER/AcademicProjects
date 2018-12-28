@@ -16,6 +16,9 @@ Written in C, intended only for `Linux`, features 4 `TCP` servers with different
 ## Data Structures
 Written in C++, intended for both `Linux` & `Windows`, features an app that manages a .csv record with thousands of companies.
 
+## High Performance Computing
+Written in C++, intended for both `Linux` & `Windows`, features a parallel computing implementation of the basic step of the PDDP algorithm using the CUDA toolkit.
+
 ## Object Oriented Programming
 Written in C++, intended for both `Linux` & `Windows`, features a text-adventure game about Ships, built with OOP paradigms.
 
@@ -28,6 +31,5 @@ Features an online courier system for orders by using QR Codes for processing th
 Supports utf-8 fully and is designed for greek locale.  
 
 ## Note
-> ~WORK IN PROGRESS~  
 > **All projects are in a finished state and are no longer maintained, please don't pull request or open issues.**  
 > **These projects are made for educational (not commercial) purposes**
