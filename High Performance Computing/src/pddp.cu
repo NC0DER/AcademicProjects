@@ -1,5 +1,49 @@
 #include "../include/pddp.cuh"
 
+#ifdef SHARED
+__global__ void matrix_multiplication_kernel(matrix w, matrix a, matrix b, matrix c, unsigned int tile_size)
+{
+    int bx = blockIdx.x;
+    int by = blockIdx.y;
+
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
+    int row = by * blockDim.y + ty;
+    int col = bx * blockDim.x + tx;
+
+    extern __shared__ double buffer[];
+    double *a_shared = &buffer[0];
+    double *b_shared = &buffer[tile_size * tile_size];
+
+    double sum = 0;
+
+    for (int k = 0; k < (tile_size + a.cols - 1) / tile_size; k++) {
+        if (k * tile_size + tx < a.cols && row < a.rows) {
+            a_shared[ty * tile_size + tx] = a.data[row * a.cols + k * tile_size + tx];
+        }
+        else {
+            a_shared[ty * tile_size + tx] = 0.0;
+        }
+        if (k * tile_size + ty < b.rows && col < b.rows) {
+            b_shared[ty * tile_size + tx] = b.data[(k * tile_size + ty) * b.cols + col];
+        }
+        else {
+            b_shared[ty * tile_size + tx] = 0.0;
+        }
+        __syncthreads();
+#pragma unroll
+        for (int n = 0; n < tile_size; ++n) {
+            sum += (a_shared[ty * tile_size + n] - w.data[row]) * b_shared[n * tile_size + tx];
+        }
+        __syncthreads();
+    }
+    if (row < c.rows && col < c.cols) {
+        c.data[row * c.cols + col] = sum;
+    }
+}
+
+#else
 __global__ void matrix_multiplication_kernel(matrix w, matrix a, matrix b, matrix c)
 {
     int bx = blockIdx.x;
@@ -41,6 +85,7 @@ __global__ void transposed_matrix_multiplication_kernel(matrix w, matrix a, matr
         c.data[row * c.cols + col] = sum;
     }
 }
+#endif
 
 __global__ void initialize_w_kernel(matrix M, matrix w)
 {

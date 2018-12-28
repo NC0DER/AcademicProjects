@@ -63,7 +63,11 @@ float matrix_multiplication(matrix w, matrix M, matrix x_prev, matrix s, unsigne
 
     initialize_vector(s, 0, 16);
     cudaEventRecord(start); // Start Event.
+#ifdef SHARED  // tileSize = blockSize
+    matrix_multiplication_kernel << <dimGrid, dimBlock, 2 * blockSize * blockSize * sizeof(double) >> >(w, M, x_prev, s, blockSize); 
+#else
     matrix_multiplication_kernel << <dimGrid, dimBlock, 2 * blockSize * blockSize * sizeof(double) >> >(w, M, x_prev, s);
+#endif
     cudaEventRecord(stop); // Stop Event.
 
     cudaEventSynchronize(stop);
