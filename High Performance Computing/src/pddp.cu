@@ -21,6 +21,27 @@ __global__ void matrix_multiplication_kernel(matrix w, matrix a, matrix b, matri
     }
 }
 
+__global__ void transposed_matrix_multiplication_kernel(matrix w, matrix a, matrix b, matrix c)
+{
+    int bx = blockIdx.x;
+    int by = blockIdx.y;
+
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
+    int row = by * blockDim.y + ty;
+    int col = bx * blockDim.x + tx;
+
+    if (row < c.rows && col < c.cols) {
+        double sum = 0;
+#pragma unroll
+        for (int k = 0; k < a.rows; k++) { //Common Dimension -> n 
+            sum += (a.data[k * a.cols + row] - w.data[k]) * b.data[k * b.cols + col];
+        }
+        c.data[row * c.cols + col] = sum;
+    }
+}
+
 __global__ void initialize_w_kernel(matrix M, matrix w)
 {
     int row = blockIdx.x * blockDim.x + threadIdx.x;

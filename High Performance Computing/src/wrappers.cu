@@ -77,6 +77,43 @@ float matrix_multiplication(matrix w, matrix M, matrix x_prev, matrix s, unsigne
     }
     return msec;
 }
+
+float transposed_matrix_multiplication(matrix w, matrix M, matrix s, matrix x, unsigned int blockSize)
+{
+    cudaError_t cudaStatus;
+    // Events for measuring the execution time
+    cudaEvent_t start;
+    cudaEvent_t stop;
+    float msec;
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    // Define grid dimensions
+    dim3 dimBlock;
+    dim3 dimGrid;
+    
+    dimBlock.x = blockSize;
+    dimBlock.y = blockSize;
+    dimBlock.z = 1;
+    dimGrid.z = 1;
+    dimGrid.x = (x.cols - 1) / dimBlock.x + 1;
+    dimGrid.y = (x.rows - 1) / dimBlock.y + 1;
+    dimGrid.z = 1;
+
+    cudaEventRecord(start); // Start Event.
+    transposed_matrix_multiplication_kernel << <dimGrid, dimBlock >> >(w, M, s, x);
+    cudaEventRecord(stop); // Stop Event.
+
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&msec, start, stop);
+
+    // cudaDeviceSynchronize waits for the kernel to finish.
+    // While returing any errors that happended during the kernel launch.
+    cudaStatus = cudaDeviceSynchronize();
+    if (cudaStatus != cudaSuccess) {
+        std::cerr << "cudaDeviceSynchronize returned error code " << cudaStatus << " after launching TransposedMatrixVectorMult Kernel!" << std::endl;
+    }
     return msec;
 }
 }
