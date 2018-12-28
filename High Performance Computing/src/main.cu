@@ -81,6 +81,16 @@ int main(int argc, char *argv[]) {
     matrix dev_x_prev(m, 1);
     matrix dev_s(n, 1);
 
+    double epsilon = pow(10, -6);
+    double delta_norm, norm;
+    double delta_norm_square, norm_square;
+    float msec = 0.f;
+    float avg_Msec = 0.f;
+    double sec = 0.0;
+    double avg_sec = 0.0;
+    double total_msec = 0.0;
+    int count = 0;
+
     M.data = (double *)malloc(M.size * sizeof(double));
     w.data = (double *)malloc(w.size * sizeof(double));
     x.data = (double *)malloc(x.size * sizeof(double));
@@ -164,6 +174,75 @@ int main(int argc, char *argv[]) {
 
         return EXIT_FAILURE;
     }
+    delta_norm = 0;
+    norm = 0;
+    
+    do {
+        ++count; // Count the amount of iterations.
+        msec = Multiply(dev_M, dev_w, dev_x, dev_x_prev, dev_s, block_num); // Multiply and return the elapsed time.
+
+        avg_Msec += msec;
+        // Transfer Xk, Xk-1 back to cpu in order to calculate the norm.
+        cudaMemcpy(x.data, dev_x.data, dev_x.size * sizeof(double), cudaMemcpyDeviceToHost);
+        cudaMemcpy(x_prev.data, dev_x_prev.data, dev_x_prev.size * sizeof(double), cudaMemcpyDeviceToHost);
+
+        // Start Measuring - Calculate norm 
+        start_timer
+            // Calculate norm ^ 2 = sum(Xk[i] ^ 2) and norm
+            norm_square = 0;
+        for (int row = 0; row < x.rows; ++row) {
+            norm_square += std::pow(x.data[row], 2);
+        }
+        norm = std::sqrt(norm_square);
+
+        // Normalize Xk.
+        for (int row = 0; row < x.rows; ++row) {
+            x.data[row] /= norm;
+        }
+
+        // Calculate ||Xk - Xk-1|| ^ 2 and ||Xk - Xk-1||.
+        delta_norm_square = 0;
+        for (int row = 0; row < x_prev.size && x.size; ++row) {
+            delta_norm_square += std::pow((x.data[row] - x_prev.data[row]), 2);
+        }
+        delta_norm = std::sqrt(delta_norm_square);
+        // Stop Measuring - Norm calculated.
+        stop_timer
+
+            if (delta_norm > epsilon) {
+                // Calculate the average time in seconds for norm calculation.
+#ifdef _WIN32
+                std::chrono::duration<double> elapsed_seconds = stop - start;
+                sec = elapsed_seconds.count();
+#else
+                sec = (stop.tv_sec - start.tv_sec) + ((stop.tv_usec - start.tv_usec) / 1000000.0);
+#endif
+                avg_sec += sec;
+                total_msec += (sec * 1000) + msec;
+                // Transfer the current Xk (Host) to the new Xk-1 (Device)!!
+                cudaMemcpy(dev_x_prev.data, x.data, dev_x.size * sizeof(double), cudaMemcpyHostToDevice);
+
+                if (cudaStatus != cudaSuccess) {
+                    std::cerr << "cudaMemcpy failed to swap xk and xk - 1!";
+
+                    // Free all memory both in Device and CPU.
+                    cudaFree(dev_M.data);
+                    cudaFree(dev_w.data);
+                    cudaFree(dev_x.data);
+                    cudaFree(dev_x_prev.data);
+
+                    free(M.data);
+                    free(w.data);
+                    free(x.data);
+                    free(x_prev.data);
+
+                    return EXIT_FAILURE;
+                }
+
+                // Re - initialize the new Xk to 0.
+                initialize_vector(dev_x, 0, block_num);
+            }
+    } while (delta_norm > epsilon);
 
     cudaFree(dev_M.data);
     cudaFree(dev_w.data);
