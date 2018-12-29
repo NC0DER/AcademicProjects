@@ -3,8 +3,8 @@
 This project was made for the homonym core elective course in university.  
 The teaching goal of this project was to build the basic step of the [PPDP  
 algorithm](https://www-users.cs.umn.edu/~boley/publications/papers/PDDP.pdf) in a parallel execution implementation using the [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit).  
-For testing purposes, you can use as input [dataset1.csv](https://nofile.io/f/bWCFwmfnRFu/dataset1.csv)  
-and to verify the output you can use [results1.csv](https://nofile.io/f/qv5f2er4QfU/results1.csv)  
+For testing purposes, you can use as input dataset1.csv and to verify  
+the output you can use results1.csv both found in this [link](https://gist.github.com/NC0DER/ebd21fc8472e6419d849dc2d6caf20e1/archive/4bfd60e2d963c15bbd47a98f7503aea0573f5c2f.zip).  
 
 ## 0. Introduction
 
