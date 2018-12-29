@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaSetDevice failed!";
 
-        // Free all memory both in Device and CPU.
+        // Free all memory both in Device and Host.
         cudaFree(dev_M.data);
         cudaFree(dev_w.data);
         cudaFree(dev_x.data);
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaMemcpy failed! 1";
 
-        // Free all memory both in Device and CPU.
+        // Free all memory both in Device and Host.
         cudaFree(dev_M.data);
         cudaFree(dev_w.data);
         cudaFree(dev_x.data);
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
     if (cudaStatus != cudaSuccess) {
         std::cerr << "cudaMemcpy failed! 2";
 
-        // Free all memory both in Device and CPU.
+        // Free all memory both in Device and Host.
         cudaFree(dev_M.data);
         cudaFree(dev_w.data);
         cudaFree(dev_x.data);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Multiply time elapsed: " << msec << " msec\n";
 #endif      
         avg_Msec += msec;
-        // Transfer Xk, Xk-1 back to cpu in order to calculate the norm.
+        // Transfer Xk, Xk-1 back to host memory in order to calculate the norm.
         cudaMemcpy(x.data, dev_x.data, dev_x.size * sizeof(double), cudaMemcpyDeviceToHost);
         cudaMemcpy(x_prev.data, dev_x_prev.data, dev_x_prev.size * sizeof(double), cudaMemcpyDeviceToHost);
 
@@ -233,7 +233,7 @@ int main(int argc, char *argv[]) {
                 if (cudaStatus != cudaSuccess) {
                     std::cerr << "cudaMemcpy failed to swap xk and xk - 1!";
 
-                    // Free all memory both in Device and CPU.
+                    // Free all memory both in Device and Host.
                     cudaFree(dev_M.data);
                     cudaFree(dev_w.data);
                     cudaFree(dev_x.data);
